@@ -19,29 +19,58 @@ model = Model('multiobj')
 
 Elem = model.addVars(Groundset, vtype=GRB.BINARY, name='El')
 x1,x3,x9 = Elem[1],Elem[3],Elem[9]
-model.addConstr(x1== or_(x3,x9), name='eps1')
+
+model.addConstr(x1 == or_(x3,x9), name='eps1')
+model.addConstrs(Elem[k]*Set[0][k] <= 0 for k in [1,3,9])
+
 
 model.ModelSense = GRB.MAXIMIZE
 
 # Limit how many solutions to collect
 model.setParam(GRB.Param.PoolSolutions, 100)
+objn1 = sum(Elem[k]*Set[0][k] for k in range(len(Elem)))
+objn2 = sum(Elem[k]*Set[1][k] for k in range(len(Elem)))
+objn3 = sum(Elem[k]*Set[2][k] for k in range(len(Elem)))
 
-for i in Subsets:
-        objn = sum(Elem[k]*Set[i][k] for k in range(len(Elem)))
-        model.setObjectiveN(objn, i, SetObjPriority[i], SetObjWeight[i],
-                            1.0 + i, 0.01, 'Set' + str(i))
+model.setObjectiveN(objn1, 0)
+model.setObjectiveN(objn2, 1)
+model.setObjectiveN(objn3, 2)
 
+Set[0]
 model.write('testmultiobj.lp')
 
-model.optimize()
+result = model.optimize()
+result
 model.setParam(GRB.Param.OutputFlag, 0)
 nSolutions = model.SolCount
 print('Number of solutions found: ' + str(nSolutions))
 model.X
-model.objVal
+obj1 = model.getObjective(0)
+obj2 = model.getObjective(1)
+obj3 = model.getObjective(2)
+print(obj1.getValue())
+print(obj2.getValue())
+print(obj3.getValue())
+
+model.X
+
+model.objn
+
+for i in Subsets:
+    model.setParam(GRB.Param.ObjNumber, i)
+model.objNval   
+model.ObjVal   
+    
+    print('\tSet%d' % i, end='')
+    for e in range(nSolutions):
+        model.setParam(GRB.Param.SolutionNumber, e)
+        print(' %6g' % model.ObjNVal, end='')
+    print('')
+
+model.ObjNVal
 model.getVars()
-
-
+model.multiobj(0)
+result.o
 
 from pathlib import Path
 data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")

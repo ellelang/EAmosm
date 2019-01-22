@@ -7,6 +7,9 @@
 
 from gurobipy import *
 
+l = tuplelist([(1,2),(1,3),(2,4)])
+l.select (1,3,'*',6)
+
 # Nutrition guidelines, based on
 # USDA Dietary Guidelines for Americans, 2005
 # http://www.health.gov/DietaryGuidelines/dga2005/
