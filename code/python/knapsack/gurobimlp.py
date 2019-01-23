@@ -90,12 +90,12 @@ from deap import tools
 LAMBDA = 100
 CXPB = 0.7
 MUTPB = 0.2
-NGEN = 50
+NGEN = 10
 N_SIZE = 10
 N_POP = 500
 MU = 50
 
-
+Set
 dict_new = {
     #'object': Ob_name,
     'SRed': Ob_w,
@@ -104,7 +104,7 @@ dict_new = {
 }
 
 ks = pd.DataFrame(dict_new)
-
+ks
 def randomgen(high, n):
     listrand = list(np.random.randint(high, size = n))
     return listrand
@@ -124,12 +124,21 @@ pop
 def evalKnapsack(individual):
     if (individual[3] == 1 or individual[9] == 1):
         individual[1] == 1
-        
+        ks["SRed"][1] < 0
+        ks["SRed"][3] < 0
+        ks["SRed"][9] < 0
     weight = np.sum(individual *ks["SRed"])
     value1 = np.sum(individual *ks["Duck"])
     value2 = np.sum(individual *ks["Cost"])
-    
     return weight, value1, value2
+#
+#def evalKnapsack(individual):
+#    weight = np.sum(individual *ks["SRed"])
+#    value1 = np.sum(individual *ks["Duck"])
+#    value2 = np.sum(individual *ks["Cost"])
+#    if individual[1] * individual[3] * individual[9] == 1:
+#        return 2, 1, value2
+#    return weight, value1, value2
 
 
 ind1 = toolbox.individual()
@@ -162,7 +171,7 @@ for g in range(NGEN):
     # The population is entirely replaced by the offspring
     pop[:] = offspring
     
-
+model.getVars()
 #pop
 stats = tools.Statistics(lambda ind: ind.fitness.values)
 stats.register("avg", np.mean, axis=0)
@@ -175,14 +184,15 @@ record
 print(record)
 logbook = tools.Logbook()
 logbook.header = "gen", "evals", "std", "min", "avg", "max"
-pop, logbook = algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.2, ngen=50, stats=stats)
+pop, logbook = algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.2, ngen=10, stats=stats)
 #hof = tools.ParetoFront()
 #pop, logbook = algorithms.eaMuPlusLambda(pop, toolbox, MU, LAMBDA, CXPB, MUTPB, NGEN, stats, halloffame=hof)
 
 pop.sort(key=lambda x: x.fitness.values)
 pop
 pop[0] #the worst solution
-pop[-1] # the best solution   
+pop[-1] # the best solution  
+model.getVars() 
 front = np.array([ind.fitness.values for ind in pop])
 front
 front.shape
@@ -193,6 +203,11 @@ front[:,2]
 weight_f = front[:,0]
 value1_f = front[:,1]
 value2_f = front[:,2]
+
+print(obj1.getValue())
+print(obj2.getValue())
+print(obj3.getValue())
+
 ks
 from mpl_toolkits import mplot3d
 fig = plt.figure()

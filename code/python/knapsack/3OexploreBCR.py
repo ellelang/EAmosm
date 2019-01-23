@@ -24,6 +24,8 @@ N_POP = 500
 MU = 50
 # knapsack with 10 objects A, B, ..., J with weight w_i and value v_i
 #Ob_name = [chr(x) for x in range(65, 75)]
+obid = list(range (1,51))
+obid
 Ob_sed = random.sample(range(1, 100),N_SIZE)
 Ob_duck = random.sample(range(1, 100), N_SIZE)
 Ob_cost = random.sample(range(1, 100), N_SIZE)
@@ -32,7 +34,7 @@ bcr_dc = [x/y for x, y in zip(Ob_duck, Ob_cost)]
 
 
 dict_new = {
-    #'object': Ob_name,
+    'ID': obid,
     'SRed': Ob_sed,
     'Duck':Ob_duck,
     'Cost':Ob_cost,
@@ -49,6 +51,7 @@ ldname
 #wht_ld = [0]*11 
 wht_ld = [[0] * N_SIZE for j in range(len(ld))]
 wht_ld
+
 for j in range(len(ld)):
     ld_value = ld [j]
     wht_ld[j] = [ld_value * x + (1-ld_value) * y for x, y in zip(bcr_sc  , bcr_dc)]
