@@ -89,75 +89,18 @@ front_df.to_csv(data_folder/"ldfront_seeds.csv",index = False, sep=',', encoding
 
 
 from mpl_toolkits import mplot3d
-fig = plt.figure()
+fig = plt.figure(figsize=(10,15))
+
 ax = plt.axes(projection='3d')
 ax.scatter3D(sed_sum, duck_sum, cost_sum, cmap='viridis')
 ax.set_xlabel('Sediment')
 ax.set_ylabel('Duck')
 ax.set_zlabel('Cost')
 
-import plotly.plotly as py
-import plotly.graph_objs as go
+fig.savefig(data_folder/'Front_ldbcr.pdf') 
 
-trace = go.Scatter3d(
-    x= sed_sum, y=duck_sum, z=cost_sum,
-    marker=dict(
-        size=4,
-        color=cost_sum,
-        colorscale='Viridis',
-    ),
-    line=dict(
-        color='#1f77b4',
-        width=1
-    )
-)
 
-data = [trace]
 
-layout = dict(
-    width=800,
-    height=700,
-    autosize=False,
-    title='ld bcr',
-    scene=dict(
-        xaxis=dict(
-            gridcolor='rgb(255, 255, 255)',
-            zerolinecolor='rgb(255, 255, 255)',
-            showbackground=True,
-            backgroundcolor='rgb(230, 230,230)'
-        ),
-        yaxis=dict(
-            gridcolor='rgb(255, 255, 255)',
-            zerolinecolor='rgb(255, 255, 255)',
-            showbackground=True,
-            backgroundcolor='rgb(230, 230,230)'
-        ),
-        zaxis=dict(
-            gridcolor='rgb(255, 255, 255)',
-            zerolinecolor='rgb(255, 255, 255)',
-            showbackground=True,
-            backgroundcolor='rgb(230, 230,230)'
-        ),
-        camera=dict(
-            up=dict(
-                x=0,
-                y=0,
-                z=1
-            ),
-            eye=dict(
-                x=-1.7428,
-                y=1.0707,
-                z=0.7100,
-            )
-        ),
-        aspectratio = dict( x=1, y=1, z=0.7 ),
-        aspectmode = 'manual'
-    ),
-)
-
-fig = dict(data=data, layout=layout)
-
-py.iplot(fig, filename='ld', height=700)
 
 top[1] * nsize 
 int(round(top[1] * nsize ))
