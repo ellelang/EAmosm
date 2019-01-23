@@ -22,7 +22,7 @@ x1,x3,x9 = Elem[1],Elem[3],Elem[9]
 
 model.addConstr(x1 == or_(x3,x9), name='eps1')
 model.addConstrs(Elem[k]*Set[0][k] <= 0 for k in [1,3,9])
-
+cost_cons = sum(Elem[k]*Set[2][k] for k in range(len(Elem)))
 
 model.ModelSense = GRB.MAXIMIZE
 
@@ -34,10 +34,10 @@ objn3 = sum(Elem[k]*Set[2][k] for k in range(len(Elem)))
 
 model.setObjectiveN(objn1, 0)
 model.setObjectiveN(objn2, 1)
-model.setObjectiveN(objn3, 2)
+model.setObjectiveN(objn3, 2, GRB.MINIMIZE)
 
 Set[0]
-model.write('testmultiobj.lp')
+model.update()
 
 result = model.optimize()
 result
