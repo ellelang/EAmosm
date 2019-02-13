@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas
 from matplotlib.table import Table
-the_table.auto_set_font_size(False)
-the_table.set_fontsize(5.5)
+#the_table.auto_set_font_size(False)
+#the_table.set_fontsize(5.5)
 
 npop = 8
 nc = 12 
@@ -11,10 +11,10 @@ grid = [[0 for x in range(nc)] for y in range(npop)]
 def randomgen(high, n):
     listrand = list(np.random.randint(high, size = n))
     return listrand
-a = randomgen(2, nc)
+a = randomgen(6, nc)
 a
 for i in range (npop):
-    grid[i] = randomgen(2,nc)
+    grid[i] = randomgen(6,nc)
 
 grid
 
@@ -68,7 +68,7 @@ def checkerboard_table(data,nc,npop, fmt='{:.0f}', bkg_colors=['white', 'white']
         tb.add_cell(-1, j, width, height/2, text=label, loc='center', 
                            edgecolor='none', facecolor='none')
     ax.add_table(tb)
-    plt.savefig("pop1.png")
+    plt.savefig("pop1.pdf",dpi=100)
     return fig
 
 if __name__ == '__main__':
@@ -167,7 +167,7 @@ dataselectcrossover
 
 
 
-def checkerboard_table(data,nc,npop, indexname, fmt='{:.0f}', bkg_colors=['yellow', 'white']):
+def checkerboard_table(data,nc,npop, indexname, fmt='{:.0f}', bkg_colors=['white', 'white']):
     fig, ax = plt.subplots(figsize=(nc*1.5,npop*1.5))
     ax.set_axis_off()
     ax.set_xlabel('Population')
@@ -203,11 +203,11 @@ def checkerboard_table(data,nc,npop, indexname, fmt='{:.0f}', bkg_colors=['yello
 
 
 checkerboard_table(data= dataselect,nc = 12, npop = 2, indexname = 'Individual')
-plt.savefig("parent1.pdf")
-checkerboard_table(data= dataselectcrossover,nc = 12, npop = 2, indexname = 'Child')
-plt.savefig("crossover.pdf")
-checkerboard_table(data= datamutate,nc = 12, npop = 2, indexname = 'Child')
-plt.savefig("mutate.pdf")
+plt.savefig("parent1.png")
+checkerboard_table(data= dataselectcrossover,nc = 12, npop = 2, indexname = 'Offspring')
+plt.savefig("crossover.png")
+checkerboard_table(data= datamutate,nc = 12, npop = 2, indexname = 'Offspring')
+plt.savefig("mutate.png")
 plt.show()
 
 
@@ -222,5 +222,67 @@ for idx, fil in enumerate(files):
     generategraph(fil, idx)
 
 
+###########3
+import matplotlib.image as mpimg
+img=mpimg.imread('popcopy.png')
+img1=mpimg.imread('crossover.png')
+img2=mpimg.imread('mutate.png')
+imgplot = plt.imshow(img)
+plt.show()
 
+fig3 = plt.figure(constrained_layout=True)
 
+gs = fig3.add_gridspec(2, 2)
+
+f3_ax1 = fig3.add_subplot(gs[:, 0])
+f3_ax1.set_title('population')
+f3_ax1.set_axis_off()
+f3_ax2 = fig3.add_subplot(gs[0, 1])
+f3_ax2.set_title('crossover')
+f3_ax1.set_axis_off()
+f3_ax3 = fig3.add_subplot(gs[1, 1])
+f3_ax3.set_title('mutation')
+f3_ax1.set_axis_off()
+f3_ax2.set_axis_off()
+f3_ax3.set_axis_off()
+
+f3_ax1.imshow(img)
+f3_ax2.imshow(img1)
+f3_ax3.imshow(img2)
+plt.savefig("all.png", dpi = 700)
+plt.show()
+
+# Two subplots, the axes array is 1-d
+f, axarr = plt.subplots(2, sharex=True)
+axarr[0].imshow(img1)
+axarr[0].set_title('crossover')
+axarr[1].imshow(img2)
+axarr[1].set_title('mutation')
+axarr[0].set_axis_off()
+axarr[1].set_axis_off()
+plt.savefig("offspring.png", dpi = 800)
+plt.show()
+
+img3=mpimg.imread('offspring.png')
+#########
+
+f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+ax1.imshow(img)
+ax2.imshow(img3)
+ax1.set_axis_off()
+ax2.set_axis_off()
+plt.savefig("combo.png", dpi = 800)
+plt.show()
+
+# Two subplots, the axes array is 1-d
+f, axarr = plt.subplots(3, sharex=True)
+axarr[0].imshow(img)
+axarr[1].imshow(img1)
+axarr[1].set_title('crossover')
+axarr[2].imshow(img2)
+axarr[2].set_title('mutation')
+axarr[0].set_axis_off()
+axarr[1].set_axis_off()
+axarr[2].set_axis_off()
+plt.savefig("combo.png", dpi = 800)
+plt.show()
