@@ -83,6 +83,8 @@ p2 = (1- Population) * np.matlib.repmat(Bounday[0,:], popsize, 1)
 Output = p1 + p2
 np.shape(p1+p2)
 
+np.shape(Population [:,1])
+
 popsize
 b = np.array([[1,4],[3,1]])
 
