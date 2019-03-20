@@ -1,4 +1,5 @@
 import random
+import array
 import numpy as np
 import json
 from deap import base
@@ -43,8 +44,8 @@ NNg
 
 # number of decision variables
 N_ns = np.sum (NNg) * n_k
-D = (M - 1) + N_ns
-
+D = int((M - 1) + N_ns)
+D
 half_b = M - 1
 half_b
 half_r = int(D - M + 1)
@@ -61,9 +62,11 @@ Bounday = lu[[1,0]]
 Bounday
 Bounday[1,:]
 La = 1 + np.arange(M,D+1)/D
+np.shape(La)
 La
 Lb = 1 + np.cos(0.4 * np.pi * np.arange(M,D+1)/D)
 Lb
+
 
 #Correlation matrix
 Aa = np.identity(M)
@@ -83,7 +86,111 @@ p2 = (1- Population) * np.matlib.repmat(Bounday[0,:], popsize, 1)
 Output = p1 + p2
 np.shape(p1+p2)
 
-np.shape(Population [:,1])
+np.shape(La)
+end = int(D+1)
+end
+begin = M - 1
+np.shape(Output)
+popeval = Output
+popevalnew = popeval
+popeval
+popevalnew[:, begin:end] = popeval[:,begin:end] * np.matlib.repmat(La, popsize, 1)\
+ -   10 * np.tile(np.matrix(Population[:,1]).transpose(), (1, half_r))
+ 
+
+##############s
+
+Xf = popeval[:,0:M-1]
+Xf
+Xs= np.empty(np.shape(popevalnew))
+temparray = np.ndarray(shape = (M,), dtype = "object")
+
+for i in range (M):
+    if i > 0:
+        idx_xs1 = int( M + n_k * np.sum (NNg[:i]))
+    else:
+        idx_xs1 = int(M)
+    idx_xs2 = int(idx_xs1 + n_k * NNg[i] - 1)
+    Xs[:,idx_xs1:idx_xs2] = popevalnew[:, idx_xs1: idx_xs2]
+    temparray[i] = popevalnew[:, idx_xs1: idx_xs2]
+
+np.shape(temparray)
+np.shape(temparray[0])
+
+Xs   
+np.shape(Xs)
+Xs
+arr = np.concatenate(temparray[0]).astype('int')
+arr
+arr = np.vstack([np.hstack(c) for c in temparray[0]])
+np.shape(arr)
+###################basic function values
+# Evaluate the individuals with an invalid fitness
+creator.create("FitnessMin", base.Fitness, weights=(-1.0, -1.0))
+creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMin)
+toolbox = base.Toolbox()
+toolbox.register("evaluate", benchmarks.sphere)
+segXss
+invalid_ind = [ind for ind in segXss]
+fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+fitnesses
+for ind, fit in zip(invalid_ind, fitnesses):
+     ind.fitness.values = fit
+G = np.zeros((popsize,M))
+G
+NNg[0]
+for i in range (M):
+    g1 = 0
+    g2 = 0
+    nss = NNg [i]
+    segXss = temparray[i]
+    for j in range (n_k):
+        Xss = segXss[:, int((j - 1) * nss + 1) : int(j * nss)]
+        g1 =  g1 + sphere_func(Xss)/nss
+        g2 =  g2 + sphere_func(Xss)/nss
+    if i % 2 == 1:
+        G[:, i] = g1
+    else:
+        G[:, i] = g2
+G = G/n_k
+
+
+##########objective values
+F = np.zeros((popsize,M))
+F
+for i in range (M):
+    Gi = G * Aa[i, :]
+    F[:,i] = ((1 + Gi ).T * np.prod (Xf[:, :M-1-i], axis = 1)).T[:,i]
+    if i > 0:
+        F [:, i] = F [:, i] * (1 - Xf[:, (M-i)])
+Output2 = F
+
+
+Aa[1,:]
+Gi =  1 + G * Aa[1, :]
+np.shape(Gi)
+((1 + Gi ).T * np.prod (Xf[:, :M-2+1], axis = 1)).T
+F [:, 1]* Xf[:, (M-2 + 1)] 
+    
+np.shape(np.prod (Xf[:, :M-2+1], axis = 1))
+
+
+sphere_func(Xss)
+
+
+idx_xs1
+idx_xs2
+np.shape(popevalnew)
+np.shape(popevalnew[:,idx_xs1:idx_xs2])
+Population [:,1]
+M
+half_r
+np.shape(Population[:,1].transpose())
+aaa= 
+np.shape(aaa)
+aaa
+
+popeval[:, 1]
 
 popsize
 b = np.array([[1,4],[3,1]])
@@ -96,7 +203,7 @@ comb(10, 3, exact=True)
 np.floor(-23.11)
 np.zeros((3,5))
 def sphere_func (x):
-    a = benchmarks.sphere(x)
+    a = x ** 2
     fit = a.sum(axis=1)
     return fit
 
