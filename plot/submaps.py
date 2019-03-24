@@ -1,5 +1,5 @@
 from __future__ import (absolute_import, division, print_function)
-
+import itertools
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 # The two statemens below are used mainly to set up a plotting
@@ -20,12 +20,254 @@ mpl.__version__, pd.__version__, gpd.__version__
 from shapely.wkt import loads
 
 
-subbasin = gpd.read_file("C:/Users/langzx/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
+#colormap = mpl.cm.Dark2.colors   # Qualitative colormap
 
+subbasin = gpd.read_file("C:/Users/langzx/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
+subbasin.crs
 subbasin.plot(color='white', edgecolor='grey')
 
-## Lambda = 1
+MO = ['TLMO','WCMO','RAMO','ICMO', 'AFMO','BFMO']
+colormap = ['dodgerblue','darkorchid','maroon','olive','orange','green']
+Level = [10, 30, 65]
+LD = [1,0.5,0]
+filename = ["shapefile_" + str(i) for i in MO]
+filename
+levelname = ["X" + str(i) + '_' for i in Level]
+levelname
+ldname = ["lambda = " + str(i) for i in LD]
+ldname
+ldvalue = ldname[0]
 
+f, ax = plt.subplots(1, figsize=(12, 12))
+ax.set_title('')
+# Other nice categorical color maps (cmap) include 'Set2' and 'Set3'
+subbasin.plot(ax=ax, color='white', edgecolor='grey')
+for i in range(len(MO)):
+    path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+    vars()[filename[i]] = gpd.read_file(data_folder/path)
+    if i < 4:
+        vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+    else:
+        vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 5)
+    #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
+    #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+
+ax.grid(False)
+ax.axis('off')
+plt.legend()
+plt.savefig('submap.pdf', bbox_inches='tight', dpi = 500)    
+
+
+
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True,figsize=(42, 42))
+
+subbasin.plot(ax=ax1, color='white', edgecolor='grey')
+for i in range(len(MO)):
+    path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+    vars()[filename[i]] = gpd.read_file(data_folder/path)
+    #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
+    vars()[filename[i]][vars()[filename[i]]['X10_'] == 4].plot(ax=ax1, color = colormap[i], label = MO[i], edgecolor = colormap[i], linewidth = 1 )
+ax1.grid(False)
+ax1.axis('off')
+
+subbasin.plot(ax=ax2, color='white', edgecolor='grey')
+for i in range(len(MO)):
+    path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+    vars()[filename[i]] = gpd.read_file(data_folder/path)
+    #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
+    vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], label = MO[i],edgecolor = colormap[i], linewidth = 1)
+ax2.grid(False)
+ax2.axis('off')
+
+
+subbasin.plot(ax=ax3, color='white', edgecolor='grey')
+for i in range(len(MO)):
+    path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+    vars()[filename[i]] = gpd.read_file(data_folder/path)
+    #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
+    vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax3, color = colormap[i], label = MO[i], edgecolor = colormap[i], linewidth = 1)
+ax3.grid(False)
+ax3.axis('off')
+
+
+
+def submaps (ldvalue, **args):
+    
+    
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True,figsize=(42, 42))
+    
+    subbasin.plot(ax=ax1, color='white', edgecolor='black')
+    
+    for i in range(len(MO)):
+        path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+        vars()[filename[i]] = gpd.read_file(data_folder/path)
+        if i < 4:
+            vars()[filename[i]][vars()[filename[i]]['X10_'] == 4].plot(ax=ax1, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 3)
+        else:
+            vars()[filename[i]][vars()[filename[i]]['X10_'] == 4].plot(ax=ax1, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 4)
+        #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
+        #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+    
+    ax1.grid(False)
+    ax1.axis('off') 
+    
+    subbasin.plot(ax=ax2, color='white', edgecolor='black')
+    
+    for i in range(len(MO)):
+        path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+        vars()[filename[i]] = gpd.read_file(data_folder/path)
+        if i < 4:
+            vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 2)
+        else:
+            vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 4)
+        #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
+        #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+    
+    ax2.grid(False)
+    ax2.axis('off')
+    
+    subbasin.plot(ax=ax3, color='white', edgecolor='black')
+    
+    for i in range(len(MO)):
+        path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+        vars()[filename[i]] = gpd.read_file(data_folder/path)
+        if i < 4:
+            vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax3, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+        else:
+            vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax3, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 4)
+        #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
+        #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+    
+    ax3.grid(False)
+    ax3.axis('off')
+    
+    
+################################
+
+plt.figure(figsize=(50,50))
+submaps(ldname[0])
+plt.savefig('submap1.png', bbox_inches='tight', dpi=200)
+
+submaps(ldname[1])
+plt.savefig('submap0.5.png', bbox_inches='tight', dpi=200)
+
+submaps(ldname[2])
+plt.savefig('submap0.png', bbox_inches='tight', dpi=200)
+
+import matplotlib.image as mpimg 
+#read image
+
+img1 = mpimg.imread('submap1.png')
+img2 = mpimg.imread('submap0.5.png')
+img3 = mpimg.imread('submap0.png')
+#plot image (2 subplots)
+text1 = "Cost level ~ 10% sediment reduction"
+text2 = "Cost level ~ 30% sediment reduction"
+text3 = "Cost level ~ 65% sediment reduction"
+
+
+
+custom_lines = [Line2D([0], [0], color=colormap[0], lw=4),
+                Line2D([0], [0], color=colormap[1], lw=4),
+                Line2D([0], [0], color=colormap[2], lw=4),
+                Line2D([0], [0], color=colormap[3], lw=4),
+                Line2D([0], [0], color=colormap[4], lw=4),
+                Line2D([0], [0], color=colormap[5], lw=4)]
+
+
+fig, [ax1, ax2, ax3] = plt.subplots(nrows=3, ncols=1, sharex = True, sharey=True, figsize = (15,15))
+ax1.imshow(img1)
+ax2.imshow(img2)
+ax3.imshow(img3)
+plt.grid(False)
+ax1.axis('off')
+ax2.axis('off')
+ax3.axis('off')
+ax1.set_title('$\lambda$ = 1')
+ax2.set_title('$\lambda$ = 0.5')
+ax3.set_title('$\lambda$ = 0')
+legend = ax1.legend(custom_lines, MO, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.,ncol=1,fontsize=14)
+legend.get_frame().set_facecolor('white')
+plt.figtext(0.12, 0.1, text1, fontsize=14)
+plt.figtext(0.42, 0.1, text2, fontsize=14)
+plt.figtext(0.70, 0.1, text3, fontsize=14)
+plt.savefig('mapplot.png', bbox_inches='tight', dpi=500)
+
+
+
+
+
+#######################################
+submaps(ldname[2])
+
+
+
+ldvalue = ldname[2]
+
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True,figsize=(42, 42))
+
+subbasin.plot(ax=ax1, color='white', edgecolor='grey')
+
+path = ldvalue + '/' + 'MOSed/' + MO[3] + '.shp'
+vars()[filename[3]] = gpd.read_file(data_folder/path)
+    #if len(vars()[filename[3]][vars()[filename[3]]['X10_'] == 4]['X10_']) > 0:
+vars()[filename[3]][vars()[filename[3]]['X10_'] == 4].plot(ax=ax1, color=colormap[3], edgecolor = colormap[3], label = MO[3], linewidth = 3)
+ax1.grid(False)
+ax1.axis('off')
+
+
+
+
+
+
+
+
+
+
+
+
+
+ldname[1]
+plt.plot([0,1,2],[0,2*i,2*i], color=color,label=MO[i])
+
+
+for i in range(len(MO)):
+    path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
+    vars()[filename[i]] = gpd.read_file(data_folder/path)
+    
+vars()[filename[]]
+## Lambda = 1
+f, ax = plt.subplots(1, figsize=(12, 12))
+ax.set_title('')
+# Other nice categorical color maps (cmap) include 'Set2' and 'Set3'
+subbasin.plot(ax=ax, color='white', edgecolor='grey')
+vars()[filename[6]][vars()[filename[6]]['X10_'] == 4].plot(ax=ax, color = 'red',linewidth = 15)
+ax.grid(False)
+ax.axis('off')
+plt.axis('equal');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#shapefile_NCMO = shapefile_NCMO.to_crs(epsg=4269)
+#outfp = data_folder / 'lambda = 1/MOSed/NCMO.shp'
+# Save to disk
+#shapefile_NCMO.to_file(outfp)
+#shapefile_NCMO
 #10% sediment 
 
 shapefile_NCMO = gpd.read_file(data_folder/'lambda = 1/MOSed/NCMO.shp')
@@ -33,7 +275,7 @@ shapefile_AFMO = gpd.read_file(data_folder/'lambda = 1/MOSed/AFMO.shp')
 shapefile_BFMO = gpd.read_file(data_folder/'lambda = 1/MOSed/BFMO.shp')
 shapefile_WCMO = gpd.read_file(data_folder/'lambda = 1/MOSed/WCMO.shp')
 shapefile_ICMO = gpd.read_file(data_folder/'lambda = 1/MOSed/ICMO.shp')
-shapefile_RAMO = gpd.read_file(data_folder/'lambda = 1/MOSed/newRAMO.shp')
+shapefile_RAMO = gpd.read_file(data_folder/'lambda = 1/MOSed/RAMO.shp')
 shapefile_TLMO = gpd.read_file(data_folder/'lambda = 1/MOSed/TLMO.shp')
 
 shapefile_NCMO.columns.values
