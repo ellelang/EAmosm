@@ -9,9 +9,12 @@ import seaborn as sns
 plt.style.use('bmh')
 from pathlib import Path
 data_folder = Path('C:/Users/langzx/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
+#data_folder = Path('D:/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
+
 from shapely.geometry import Point, Polygon
 from matplotlib.lines import Line2D
 import pandas as pd
+
 import geopandas as gpd
 from geopandas import GeoSeries, GeoDataFrame
 #import pyepsg
@@ -21,13 +24,14 @@ from shapely.wkt import loads
 
 
 #colormap = mpl.cm.Dark2.colors   # Qualitative colormap
+#subbasin = gpd.read_file("D:/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
 
 subbasin = gpd.read_file("C:/Users/langzx/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
 subbasin.crs
 subbasin.plot(color='white', edgecolor='grey')
 
-MO = ['TLMO','WCMO','RAMO','ICMO', 'AFMO','BFMO']
-colormap = ['dodgerblue','darkorchid','maroon','olive','orange','green']
+MO = ['TLMO','WCMO','RAMO','ICMO','NCMO', 'AFMO','BFMO']
+colormap = ['dodgerblue','darkorchid','maroon','olive','sienna','orange','green']
 Level = [10, 30, 65]
 LD = [1,0.5,0]
 filename = ["shapefile_" + str(i) for i in MO]
@@ -172,7 +176,8 @@ custom_lines = [Line2D([0], [0], color=colormap[0], lw=4),
                 Line2D([0], [0], color=colormap[2], lw=4),
                 Line2D([0], [0], color=colormap[3], lw=4),
                 Line2D([0], [0], color=colormap[4], lw=4),
-                Line2D([0], [0], color=colormap[5], lw=4)]
+                Line2D([0], [0], color=colormap[5], lw=4),
+                Line2D([0], [0], color=colormap[6], lw=4)]
 
 
 fig, [ax1, ax2, ax3] = plt.subplots(nrows=3, ncols=1, sharex = True, sharey=True, figsize = (15,15))

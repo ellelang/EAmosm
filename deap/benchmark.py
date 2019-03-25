@@ -166,6 +166,9 @@ for i in range (M):
 Output2 = F
 
 
+
+
+
 Aa[1,:]
 Gi =  1 + G * Aa[1, :]
 np.shape(Gi)
