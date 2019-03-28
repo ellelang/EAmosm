@@ -10,6 +10,7 @@ from deap import benchmarks
 from deap.benchmarks.tools import diversity, convergence, hypervolume
 from scipy.special import comb
 import numpy.matlib
+import itertools
 # M = 3 number of objectives M = 2, 3 OR M = 6, 10
 # N_S = 100 * M: THE NUMBER OF DECISION VARIABLES N_S = 200, 300 OR 600, 1000
 # N_K =  THE number of subcomponents in each variable group = 5 
@@ -124,6 +125,37 @@ arr = np.concatenate(temparray[0]).astype('int')
 arr
 arr = np.vstack([np.hstack(c) for c in temparray[0]])
 np.shape(arr)
+
+
+############Sampling true PF AND PS
+### W = T_uniform(k,m)
+a = np.arange(1, M)
+a
+H = np.floor((n_k*a.prod())**(1/(M-1)))
+while comb(H + M-1, M - 1, exact=True) >= n_k and H > 0:
+    H = H - 1
+if comb(H + M-1, M - 1) <= 2 or H == 0:
+    H = H + 1
+n_k= int(comb(H + M-1, M - 1))
+n_k
+a1 = np.arange(M-1)
+a1
+H
+#np.array(list(itertools.combinations(np.arange(1, H + M), M -1)))
+temp = np.array(list(itertools.combinations(np.arange(1, H + M), M -1))) - np.matlib.repmat(a1, int(comb(H + M-1, M - 1)), 1) - 1
+temp[:,0]
+W = np.zeros((n_k,M))
+W[:,2]
+W[:,1] = temp[:,1] - 0
+W[:,2]= temp[:,2] - temp[:,1]
+for i in range (1,M):
+    print(i) 
+    W[:,i]= temp[:,i-1]
+W[:,-1] = H - temp[:,-1]
+W = W/H
+W
+
+
 ###################basic function values
 # Evaluate the individuals with an invalid fitness
 creator.create("FitnessMin", base.Fitness, weights=(-1.0, -1.0))
