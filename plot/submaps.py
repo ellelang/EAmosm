@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 plt.style.use('bmh')
 from pathlib import Path
-data_folder = Path('C:/Users/langzx/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
-#data_folder = Path('D:/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
+#data_folder = Path('C:/Users/langzx/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
+data_folder = Path('D:/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
 
 from shapely.geometry import Point, Polygon
 from matplotlib.lines import Line2D
@@ -24,11 +24,13 @@ from shapely.wkt import loads
 
 
 #colormap = mpl.cm.Dark2.colors   # Qualitative colormap
-#subbasin = gpd.read_file("D:/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
+subbasin = gpd.read_file("D:/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
 
-subbasin = gpd.read_file("C:/Users/langzx/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
+#subbasin = gpd.read_file("C:/Users/langzx/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
 subbasin.crs
 subbasin.plot(color='white', edgecolor='grey')
+
+stream =  gpd.read_file("D:/OneDrive/AAMOSM2018/0828mapdata/LeSueur_Streamsproject.shp")
 
 MO = ['TLMO','WCMO','RAMO','ICMO','NCMO', 'AFMO','BFMO']
 colormap = ['dodgerblue','darkorchid','maroon','olive','sienna','orange','green']
@@ -46,13 +48,14 @@ f, ax = plt.subplots(1, figsize=(12, 12))
 ax.set_title('')
 # Other nice categorical color maps (cmap) include 'Set2' and 'Set3'
 subbasin.plot(ax=ax, color='white', edgecolor='grey')
+stream.plot(ax=ax, color='blue', edgecolor='grey')
 for i in range(len(MO)):
     path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
     vars()[filename[i]] = gpd.read_file(data_folder/path)
     if i < 4:
-        vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+        vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
     else:
-        vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 5)
+        vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 5)
     #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
     #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
 
@@ -101,7 +104,8 @@ def submaps (ldvalue, **args):
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True,figsize=(42, 42))
     
     subbasin.plot(ax=ax1, color='white', edgecolor='black')
-    
+    stream.plot(ax=ax1, color='blue', edgecolor='grey')
+
     for i in range(len(MO)):
         path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
         vars()[filename[i]] = gpd.read_file(data_folder/path)
@@ -116,7 +120,8 @@ def submaps (ldvalue, **args):
     ax1.axis('off') 
     
     subbasin.plot(ax=ax2, color='white', edgecolor='black')
-    
+    stream.plot(ax=ax2, color='blue', edgecolor='grey')
+
     for i in range(len(MO)):
         path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
         vars()[filename[i]] = gpd.read_file(data_folder/path)
@@ -131,7 +136,8 @@ def submaps (ldvalue, **args):
     ax2.axis('off')
     
     subbasin.plot(ax=ax3, color='white', edgecolor='black')
-    
+    stream.plot(ax=ax3, color='blue', edgecolor='grey')
+
     for i in range(len(MO)):
         path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
         vars()[filename[i]] = gpd.read_file(data_folder/path)

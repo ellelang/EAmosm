@@ -147,7 +147,7 @@ temp[:,0]
 W = np.zeros((n_k,M))
 W[:,2]
 W[:,1] = temp[:,1] - 0
-W[:,2]= temp[:,2] - temp[:,1]
+#W[:,2]= temp[:,2] - temp[:,1]
 for i in range (1,M):
     print(i) 
     W[:,i]= temp[:,i-1]
@@ -155,6 +155,7 @@ W[:,-1] = H - temp[:,-1]
 W = W/H
 W
 
+###W = T_repeat (k,M)
 
 ###################basic function values
 # Evaluate the individuals with an invalid fitness

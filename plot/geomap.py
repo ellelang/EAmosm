@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 plt.style.use('bmh')
 from pathlib import Path
-data_folder = Path('C:/Users/langzx/OneDrive/AAMOSM2018/0828mapdata')
+data_folder = Path('D:/OneDrive/AAMOSM2018/0828mapdata')
+
+#data_folder = Path('C:/Users/langzx/OneDrive/AAMOSM2018/0828mapdata')
 from shapely.geometry import Point, Polygon
 from matplotlib.lines import Line2D
 import pandas as pd
@@ -20,7 +22,7 @@ mpl.__version__, pd.__version__, gpd.__version__
 from shapely.wkt import loads
 from fiona.crs import from_epsg
 from pyproj import Proj
- Proj('+init=epsg:4326', preserve_flags=True)
+ #Proj('init=epsg:4326', preserve_flags=True)
 # Determine the CRS of the GeoDataFrame
 
 
