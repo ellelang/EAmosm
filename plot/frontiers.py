@@ -42,7 +42,7 @@ ax2.scatter(dfnoseed['Duck'], dfnoseed['Cost']/1000000,color =colormap[2])
 ax2.scatter(dfbcr_eval['Duck'], dfbcr_eval['Cost']/1000000,color =colormap[3])
 
 ax2.grid(False)
-ax2.set_xlabel("(b).Auual duck hatchlings",fontsize=18)
+ax2.set_xlabel("(b).Annual duck hatchlings",fontsize=18)
 ax2.set_ylabel("Cost ($ Million /Year)",fontsize=18)
 ax2.set_ylim(0,160)
 
