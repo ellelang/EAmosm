@@ -78,7 +78,7 @@ for i in range (len(ld)):
 df_dataset    
 df_dataset.to_csv(data_folder/"demodata.csv",index = False, sep=',', encoding='utf-8')
 
-
+ks.columns
 
 
 def randomgen(high, n):
@@ -97,12 +97,12 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 pop = toolbox.population(n = N_POP)
 pop
 
-
+individual[1]
 
 def evalKnapsack(individual):
-    weight = np.sum(individual *ks["weight"])
-    value1 = np.sum(individual *ks["value1"])
-    value2 = np.sum(individual *ks["value2"])
+    weight = np.sum(individual *ks["SRed"])
+    value1 = np.sum(individual *ks["Duck"])
+    value2 = np.sum(individual *ks["Cost"])
     if individual[1] * individual[3] * individual[9] == 1:
         return 2, 1, value2
     return weight, value1, value2

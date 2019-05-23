@@ -9,8 +9,8 @@ import seaborn as sns
 plt.style.use('bmh')
 from pathlib import Path
 #data_folder = Path('C:/Users/langzx/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
-data_folder = Path('D:/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
-
+#data_folder = Path('D:/OneDrive/AAMOSM2018/maps/0425bcrSurvive')
+data_folder = Path('D:/UWonedrive/OneDrive - UW/AAMOSM2018/maps/0425bcrSurvive')
 from shapely.geometry import Point, Polygon
 from matplotlib.lines import Line2D
 import pandas as pd
@@ -24,16 +24,27 @@ from shapely.wkt import loads
 
 
 #colormap = mpl.cm.Dark2.colors   # Qualitative colormap
-subbasin = gpd.read_file("D:/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
+subbasin = gpd.read_file("D:/UWonedrive/OneDrive - UW/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
 
 #subbasin = gpd.read_file("C:/Users/langzx/OneDrive/AAMOSM2018/NewSubstoShare_Les3/New_subs1_LeS3model.shp")
 subbasin.crs
 subbasin.plot(color='white', edgecolor='grey')
 
-stream =  gpd.read_file("D:/OneDrive/AAMOSM2018/0828mapdata/LeSueur_Streamsproject.shp")
+stream =  gpd.read_file("D:/UWonedrive/OneDrive - UW/AAMOSM2018/0828mapdata/LeSueur_Streamsproject.shp")
 
 MO = ['TLMO','WCMO','RAMO','ICMO','NCMO', 'AFMO','BFMO']
-colormap = ['dodgerblue','darkorchid','maroon','olive','sienna','orange','green']
+#colormap = ['dodgerblue','darkorchid','maroon','olive','sienna','orange','green']
+colormap = ['#626567','#717d7e','#e5e7e9','#d7dbdd','#cacfd2','#909497','#797d7f']
+markerlist=   ['s','*','<','-','1','2','o']         
+#e5e7e9
+#d7dbdd
+#cacfd2
+#909497
+#797d7f
+#717d7e
+
+
+
 Level = [10, 30, 65]
 LD = [1,0.5,0]
 filename = ["shapefile_" + str(i) for i in MO]
@@ -53,9 +64,11 @@ for i in range(len(MO)):
     path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
     vars()[filename[i]] = gpd.read_file(data_folder/path)
     if i < 4:
-        vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+        vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i],\
+            edgecolor = colormap[i],linewidth = 1)
     else:
-        vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 5)
+        vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i],\
+            edgecolor = colormap[i],linewidth = 5)
     #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
     #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
 
@@ -82,7 +95,8 @@ for i in range(len(MO)):
     path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
     vars()[filename[i]] = gpd.read_file(data_folder/path)
     #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
-    vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], label = MO[i],edgecolor = colormap[i], linewidth = 1)
+    vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], \
+        label = MO[i],edgecolor = colormap[i], linewidth = 1)
 ax2.grid(False)
 ax2.axis('off')
 
@@ -104,15 +118,17 @@ def submaps (ldvalue, **args):
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True,figsize=(42, 42))
     
     subbasin.plot(ax=ax1, color='white', edgecolor='black')
-    stream.plot(ax=ax1, color='blue', edgecolor='grey')
+    #stream.plot(ax=ax1, color='silver', edgecolor='grey')
 
     for i in range(len(MO)):
         path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
         vars()[filename[i]] = gpd.read_file(data_folder/path)
         if i < 4:
-            vars()[filename[i]][vars()[filename[i]]['X10_'] == 4].plot(ax=ax1, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 3)
+            vars()[filename[i]][vars()[filename[i]]['X10_'] == 4].plot(ax=ax1, color = colormap[i], \
+                label = MO[i], edgecolor = colormap[i],linewidth = 3)
         else:
-            vars()[filename[i]][vars()[filename[i]]['X10_'] == 4].plot(ax=ax1, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 4)
+            vars()[filename[i]][vars()[filename[i]]['X10_'] == 4].plot(ax=ax1, color = colormap[i], \
+                label = MO[i], edgecolor = colormap[i],linewidth = 4)
         #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
         #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
     
@@ -120,15 +136,17 @@ def submaps (ldvalue, **args):
     ax1.axis('off') 
     
     subbasin.plot(ax=ax2, color='white', edgecolor='black')
-    stream.plot(ax=ax2, color='blue', edgecolor='grey')
+    #stream.plot(ax=ax2, color='silver', edgecolor='grey')
 
     for i in range(len(MO)):
         path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
         vars()[filename[i]] = gpd.read_file(data_folder/path)
         if i < 4:
-            vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 2)
+            vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], \
+                label = MO[i], edgecolor = colormap[i],linewidth = 2)
         else:
-            vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 4)
+            vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax2, color = colormap[i], \
+                label = MO[i], edgecolor = colormap[i],linewidth = 4)
         #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
         #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
     
@@ -136,15 +154,17 @@ def submaps (ldvalue, **args):
     ax2.axis('off')
     
     subbasin.plot(ax=ax3, color='white', edgecolor='black')
-    stream.plot(ax=ax3, color='blue', edgecolor='grey')
+    #stream.plot(ax=ax3, color='silver', edgecolor='grey')
 
     for i in range(len(MO)):
         path = ldvalue + '/' + 'MOSed/' + MO[i] + '.shp'
         vars()[filename[i]] = gpd.read_file(data_folder/path)
         if i < 4:
-            vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax3, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
+            vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax3, color = colormap[i], \
+                label = MO[i], edgecolor = colormap[i],linewidth = 1)
         else:
-            vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax3, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 4)
+            vars()[filename[i]][vars()[filename[i]]['X65_'] == 4].plot(ax=ax3, color = colormap[i], \
+                label = MO[i], edgecolor = colormap[i],linewidth = 4)
         #if len(vars()[filename[i]][vars()[filename[i]]['X10_'] == 4]['X10_']) > 0:
         #vars()[filename[i]][vars()[filename[i]]['X30_'] == 4].plot(ax=ax, color = colormap[i], label = MO[i], edgecolor = colormap[i],linewidth = 1)
     
@@ -177,13 +197,13 @@ text3 = "Cost level ~ 65% sediment reduction"
 
 
 
-custom_lines = [Line2D([0], [0], color=colormap[0], lw=4),
-                Line2D([0], [0], color=colormap[1], lw=4),
-                Line2D([0], [0], color=colormap[2], lw=4),
-                Line2D([0], [0], color=colormap[3], lw=4),
-                Line2D([0], [0], color=colormap[4], lw=4),
-                Line2D([0], [0], color=colormap[5], lw=4),
-                Line2D([0], [0], color=colormap[6], lw=4)]
+custom_lines = [Line2D([0], [0], color=colormap[0], lw=14),
+                Line2D([0], [0], color=colormap[1], lw=14),
+                Line2D([0], [0], color=colormap[2], lw=14),
+                Line2D([0], [0], color=colormap[3], lw=14),
+                Line2D([0], [0], color=colormap[4], lw=14),
+                Line2D([0], [0], color=colormap[5], lw=14),
+                Line2D([0], [0], color=colormap[6], lw=14)]
 
 
 fig, [ax1, ax2, ax3] = plt.subplots(nrows=3, ncols=1, sharex = True, sharey=True, figsize = (15,15))
