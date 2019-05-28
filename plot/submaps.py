@@ -34,7 +34,7 @@ stream =  gpd.read_file("D:/UWonedrive/OneDrive - UW/AAMOSM2018/0828mapdata/LeSu
 
 MO = ['TLMO','WCMO','RAMO','ICMO','NCMO', 'AFMO','BFMO']
 #colormap = ['dodgerblue','darkorchid','maroon','olive','sienna','orange','green']
-colormap = ['#626567','#717d7e','#e5e7e9','#d7dbdd','#cacfd2','#909497','#797d7f']
+colormap = ['#626567','#717d7e','#909497','#ABB2B9','#e5e7e9','#d7dbdd','#cacfd2']
 markerlist=   ['s','*','<','-','1','2','o']         
 #e5e7e9
 #d7dbdd

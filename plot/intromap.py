@@ -109,14 +109,14 @@ custom_lines1 = [Line2D([0],[0], color='w', lw=20),
                 Line2D([0], [0],  color='w',markersize=20, markerfacecolor='w'),
                 Line2D([0], [0],  color='w',markersize=20, markerfacecolor='w'),
                 Line2D([0], [0],  color='w',markersize=20, markerfacecolor='w')]
-legend1 = ax1.legend(custom_lines1, ['Subwatersheds:','Cobb River', 'LeSueur River', 'Mapple River','Gages','Zone 1 = Upland','Zone 2 = Transitional','Zone 3 = Incised'], fontsize=20)
+legend1 = ax1.legend(custom_lines1, ['Subwatersheds:','Cobb River', 'LeSueur River', 'Maple River','Gages','Zone 1 = Upland','Zone 2 = Transitional','Zone 3 = Incised'], fontsize=20)
 legend1.get_frame().set_facecolor('white')
 legend1.get_frame().set_linewidth(0.0)
 #ax1.text(-0.1, 1.1, 'A', transform=ax1.transAxes, 
 #            size=60, weight='bold')
 #ax1.grid(False)
 #ax1.axis('off')
-plt.savefig('intromapLE.png', bbox_inches='tight', dpi=200)
+plt.savefig('intromapLE.png', bbox_inches='tight', dpi=500)
 
 subbasin.plot(ax=ax2, column = 'Zone', linewidth=0.8,  cmap='Paired', edgecolor='dimgray')
 stream.plot(ax = ax2, edgecolor='blue')
