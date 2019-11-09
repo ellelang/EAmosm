@@ -9,6 +9,9 @@ cost_maple29 <- maple29$Cost
 cost_sign <- sample (cost_maple29, 100)
 cost_sign
 
+
+
+
 x.gam<-rgamma(200,rate=0.5,shape=3.5)
 med.gam<-mean(x.gam) ## sample mean
 var.gam<-var(x.gam) ## sample variance
@@ -34,7 +37,7 @@ distribution")
 x_id <- seq (1, 100, 1)
 y <- dgamma(x, scale=l_s[1], shape=a_s[1])*1000
 plot (x, y)
-dgamma(1, scale=l_s[1], shape=a_s[1])*1000
+#dgamma(1, scale=l_s[1], shape=a_s[1])*1000
 sed_sign <- y
 
 data_exp <- data.frame (cbind (x_id, sed_sign, cost_sign))
