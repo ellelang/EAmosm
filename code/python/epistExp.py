@@ -219,28 +219,28 @@ outputdata.to_csv(data_folder/"routing_output.csv", index=False)
 def hockystick (outputdata,les_sb, cob_sb, map_sb,period):
     Qth = 0.01
     # Drainage area
-    LES_DA = 1156.56
-    COB_DA = 784.12
+    #LES_DA = 1156.56
+    #COB_DA = 784.12
     MAP_DA = 877.15
     #Incised length
-    LES_L = 40.84
-    COB_L = 35.79
+    #LES_L = 40.84
+    #COB_L = 35.79
     MAP_L = 31.91
 
     CQ_a = 6867.9
     CQ_b = 2.1572
 
-    Qs_LES  = np.zeros(9131)
-    Qs_COB  = np.zeros (9131)
+    #Qs_LES  = np.zeros(9131)
+    #Qs_COB  = np.zeros (9131)
     Qs_MAP  = np.zeros (9131)
 
-    Qs_LESsum = 0
-    Qs_COBsum = 0
+    #Qs_LESsum = 0
+    #Qs_COBsum = 0
     Qs_MAPsum = 0
 
     slbaseline_MAP = 15516
-    slbaseline_COB = 17557
-    slbaseline_LES = 18771
+    #slbaseline_COB = 17557
+    #slbaseline_LES = 18771
 
     #SBoutput_LES = outputdata.loc[outputdata['Subbasin'] == les_sb].reset_index(inplace=False)
     #SBoutput_COB = outputdata.loc[outputdata['Subbasin'] == cob_sb].reset_index(inplace=False)
@@ -272,8 +272,10 @@ def hockystick (outputdata,les_sb, cob_sb, map_sb,period):
     #slmo_COB  = Qs_COBsum / period
     slmo_MAP  = Qs_MAPsum / period
     #sum_sl = np.sum([slmo_LES,slmo_COB,slmo_MAP])
+    sum_sl = np.sum(slmo_MAP )
     #baselines_sum = np.sum([slbaseline_MAP, slbaseline_COB, slbaseline_LES])
-    #reduction_sum = baselines_sum - sum_sl
+    baselines_sum = np.sum(slbaseline_MAP)
+    reduction_sum = baselines_sum - sum_sl
     perc_Qs = (reduction_sum)/baselines_sum
     return reduction_sum, perc_Qs
 
