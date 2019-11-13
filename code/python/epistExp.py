@@ -148,7 +148,6 @@ C3 = SBIO_subset['C3'].reset_index()['C3']
 #for m in range(2, -1, -1):
 #    print(m)
 
-
 def apply_riverrout (sigma,n,Qtnout,Headerwater,upSBs, ID_next,C1,C2,C3):
      count = np.zeros (3)
      Qtnoutriver = np.zeros (n)
@@ -156,6 +155,7 @@ def apply_riverrout (sigma,n,Qtnout,Headerwater,upSBs, ID_next,C1,C2,C3):
      #######HEADWATER: move down river starting from upppermost SB
      for m in range(2, -1, -1):
          if Headerwater[m] == "Y":
+         
              i = m
              count [i] = count [i] + 1
              # call storageoutflow fucntion to generate Qtnout (index)
@@ -173,8 +173,7 @@ def apply_riverrout (sigma,n,Qtnout,Headerwater,upSBs, ID_next,C1,C2,C3):
                                                + C2[i] * Qtnoutriver [index_2 - 1] \
                                                + C3[i] * QtnoutriverMCrouted [index_2 - 1]
      #return QtnoutriverMCrouted       
-     
-             ###MOVE DOWN SB UNTIL REACHING THE TERMINAL##########END HEADWATER
+           ###MOVE DOWN SB UNTIL REACHING THE TERMINAL##########END HEADWATER
              o = i
              i = ID_next.index.tolist()[o]
              while True:
