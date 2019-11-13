@@ -5,12 +5,29 @@ import json
 import scipy.special as sps
 from pathlib import Path
 import seaborn as sns
-data_folder = Path('C:/Users/langzx/Desktop/github/ESS521project/data/output')
-icmo_maple = pd.read_csv (data_folder/"icmo_MAP_sub232119.csv")
-wcmo_maple23 = pd.read_csv (data_folder/"wcmo_MAP_sub23.csv")
-wcmo_maple21 = pd.read_csv (data_folder/"wcmo_MAP_sub21.csv")
-wcmo_maple19 = pd.read_csv (data_folder/"wcmo_MAP_sub19.csv")
-icmo_maple.columns
+import itertools
+
+#data_folder = Path('C:/Users/langzx/Desktop/github/ESS521project/data/output')
+#icmo_maple = pd.read_csv (data_folder/"icmo_MAP_sub232119.csv")
+#wcmo_maple23 = pd.read_csv (data_folder/"wcmo_MAP_sub23.csv")
+#wcmo_maple21 = pd.read_csv (data_folder/"wcmo_MAP_sub21.csv")
+#wcmo_maple19 = pd.read_csv (data_folder/"wcmo_MAP_sub19.csv")
+#icmo_maple.columns
+data_folder = Path('C:/Users/langzx/Desktop/github/ESS521project/data/csv')
+wcmoga = pd.read_csv (data_folder/"wcmogawhole.csv")
+icmomaple = pd.read_csv (data_folder/"icmo_MAP_sub232119.csv")
+wcmo_subset = wcmoga[ (wcmoga['HYDSB_LES30SB']==23) | (wcmoga['HYDSB_LES30SB']==21 )| (wcmoga['HYDSB_LES30SB']==19)]
+wcmoSedRed = wcmo_subset.groupby(['HYDSB_LES30SB'])['SedRed'].sum().reset_index()
+icmoSedRed = icmomaple.groupby(['Subbasin_2'])['SedRed'].sum().reset_index()
+
+wcmoSedRed.columns = ['Subbasin','SedRed']
+icmoSedRed.columns = ['Subbasin','SedRed']
+SedRedSum = pd.merge([wcmoSedRed, icmoSedRed])
+SedSum = pd.concat([wcmoSedRed,icmoSedRed]).groupby(['Subbasin'])['SedRed'].sum().reset_index()
+pmt = itertools.product([0,1], repeat=3)
+pmtmatrix = np.matrix(list(pmt))
+sumSed = pmtmatrix.dot(SedSum['SedRed'])
+
 
 
 mdata_folder = Path("C:/Users/langzx/Documents")
