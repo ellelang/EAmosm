@@ -1,58 +1,57 @@
-from pathlib import Path
-import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+import json
+import scipy.special as sps
+from pathlib import Path
+import seaborn as sns
+data_folder = Path('C:/Users/langzx/Desktop/github/ESS521project/data/output')
+icmo_maple = pd.read_csv (data_folder/"icmo_MAP_sub232119.csv")
+wcmo_maple23 = pd.read_csv (data_folder/"wcmo_MAP_sub23.csv")
+wcmo_maple21 = pd.read_csv (data_folder/"wcmo_MAP_sub21.csv")
+wcmo_maple19 = pd.read_csv (data_folder/"wcmo_MAP_sub19.csv")
+icmo_maple.columns
+
+
 mdata_folder = Path("C:/Users/langzx/Documents")
-
 wcmo = pd.read_csv(mdata_folder/"WCMO.csv")
-WCMO_N = wcmo.shape[0]
-wcmo['select'] = np.random.randint(2, size=WCMO_N)
+wcmo_subset = wcmo[ (wcmo['HYDSB_LES30SB']==23) | (wcmo['HYDSB_LES30SB']==21 )| (wcmo['HYDSB_LES30SB']==19)]
+wcmo_subset.shape
+wcmo_subset['select'] = np.repeat(1,405)
+
 flowdata = pd.read_csv(mdata_folder/"SWAT_WY.csv")
+flowdata_subset = flowdata[(flowdata['Subbasin'] == 23)|(flowdata['Subbasin'] == 21)|(flowdata['Subbasin'] == 19)]
 SBIO = pd.read_csv(mdata_folder/"SB IO Detail.csv")
-subbasin = flowdata['Subbasin']
+SBIO_subset = SBIO[(SBIO['ID'] == 23)|(SBIO['ID'] == 21)|(SBIO['ID'] == 19)]
 
-# Section 1: Allocate WCMO to each HYDSB
-def allocate (mo, sb_n, mo_n):
-  SB_mocount = np.zeros(sb_n)
-  SB_moaream2 = np.zeros(sb_n)
-  mo['select'] = np.random.randint(2, size=mo_n)
-  for i in range (0,sb_n):
-      for j in range (0,mo_n):
-          if mo['HYDSB_LES30SB'][j] == i and mo['select'][j] == 1:
-             SB_mocount [i] =  SB_mocount [i] + 1
-             SB_moaream2 [i] = SB_moaream2 [i] + mo['area_m2'][j]
-  return SB_mocount,SB_moaream2
-
-WCMOselect =  allocate (wcmo,30,WCMO_N)
+subbasin = flowdata_subset['Subbasin'].reset_index()['Subbasin']
 
 
-# Section 2: Call water yield data
-def wateryeild_data (path):
-    data_folder = Path(path)
-    flowdata = pd.read_csv(data_folder/"SWAT_WY.csv")
-    wateryeild = flowdata['Water Yield']
-    return wateryeild
+sub_select = np.array([19,21,23])
+SB_moaream2 = wcmo_subset.groupby(['HYDSB_LES30SB'])['area_m2'].sum().reset_index()['area_m2']
+SB_mocount = wcmo_subset.groupby(['HYDSB_LES30SB']).size().reset_index()['HYDSB_LES30SB']
+SB_mocount[0]
 
-WaterYeild = wateryeild_data("C:/Users/langzx/Documents")
-
+WaterYeild = flowdata_subset['Water Yield'].reset_index()['Water Yield']
+WaterYeild.shape
 # Section 3: River routing (MG-CG)
 
-SBarea_m2 = SBIO['SBarea_m2']
-SB_mocount = allocate (wcmo,30,WCMO_N) [0]
-SB_moaream2 = allocate (wcmo,30,WCMO_N) [1]
+SBarea_m2 = SBIO_subset['SBarea_m2'].reset_index()['SBarea_m2']
+
 def riverrout (WaterYeild, SBarea_m2,SB_mocount,SB_moaream2):
     C = 2
     Anmin_factor = 5/100
     alpha = 0.5
     k = 1e-7
     ET = 1.16e-8
-    Anmin = SBarea_m2 * Anmin_factor
+    Anmin= SBarea_m2 * Anmin_factor
     WCMO_D = 6.6 * 0.3048
     WCMO_DAfactor = 8.9
     dt = 86400
-    n = 30 * 9131
-    Aw = np.empty(30)
-    Awbar = np.empty (30)
-    WCMO_SAbar = np.empty (30)
+    n = 3 * 9131
+    Aw = np.empty(3)
+    Awbar = np.empty (3)
+    WCMO_SAbar = np.empty (3)
     It = np.empty (n)
     St = np.empty (n)
     Ht = np.empty (n)
@@ -64,9 +63,8 @@ def riverrout (WaterYeild, SBarea_m2,SB_mocount,SB_moaream2):
     
     Qtnout = np.empty (n)
 ### If no WCMO is selected:
-    for i in range (0,30):
+    for i in range (0,3):
         if SB_mocount [i] == 0:
-
           for j in range (0, 9131):
                 index = j + ((i + 1) - 1) * 9131
                 Qtnout[index] = WaterYeild[index]
@@ -74,8 +72,6 @@ def riverrout (WaterYeild, SBarea_m2,SB_mocount,SB_moaream2):
 ### If WCMO is selected:                
         else:
           
-          
-
             if WCMO_DAfactor * SB_moaream2 [i] > SBarea_m2[i] - Anmin [i]:
                   Aw [i] = SBarea_m2[i] - Anmin [i]
             else:
@@ -133,27 +129,32 @@ def riverrout (WaterYeild, SBarea_m2,SB_mocount,SB_moaream2):
     #Qtnout.reshape(9131,30)
     #np.where(Qtnout != 0)
     return Qtnout
-    ### When there are WCMO selected
 Qtnout_record = riverrout(WaterYeild, SBarea_m2,SB_mocount,SB_moaream2)
-Qtnout_record 
+
 
 # Section 3.2: Apply River_routing
  
 sigma = 0.7
-n = 30 * 9131
-Headerwater = SBIO['Headwater']
-upSBs = SBIO['up_SBs']
-ID_next = SBIO['ID_next']
-C1 = SBIO['C1']
-C2 = SBIO['C2']
-C3 = SBIO['C3']
+n = 3 * 9131
+Headerwater = SBIO_subset['Headwater'].reset_index()['Headwater']
+upSBs = SBIO_subset['up_SBs'].reset_index()['up_SBs']
+ID_next = SBIO_subset['ID_next'].reset_index()['ID_next']
+ID_next[0] = 0
+ID_next.index.tolist()
+C1 = SBIO_subset['C1'].reset_index()['C1']
+C2 = SBIO_subset['C2'].reset_index()['C2']
+C3 = SBIO_subset['C3'].reset_index()['C3']
+#
+#for m in range(2, -1, -1):
+#    print(m)
+
 
 def apply_riverrout (sigma,n,Qtnout,Headerwater,upSBs, ID_next,C1,C2,C3):
-     count = np.zeros (30)
+     count = np.zeros (3)
      Qtnoutriver = np.zeros (n)
      QtnoutriverMCrouted = np.zeros (n)
      #######HEADWATER: move down river starting from upppermost SB
-     for m in range(29, -1, -1):
+     for m in range(2, -1, -1):
          if Headerwater[m] == "Y":
              i = m
              count [i] = count [i] + 1
@@ -171,10 +172,11 @@ def apply_riverrout (sigma,n,Qtnout,Headerwater,upSBs, ID_next,C1,C2,C3):
                  QtnoutriverMCrouted [index_2] = C1[i] * Qtnoutriver [index_2] \
                                                + C2[i] * Qtnoutriver [index_2 - 1] \
                                                + C3[i] * QtnoutriverMCrouted [index_2 - 1]
-             ##########END HEADWATER
-             ###MOVE DOWN SB UNTIL REACHING THE TERMINAL
+     #return QtnoutriverMCrouted       
+     
+             ###MOVE DOWN SB UNTIL REACHING THE TERMINAL##########END HEADWATER
              o = i
-             i = ID_next[o]
+             i = ID_next.index.tolist()[o]
              while True:
                  count [i] = count [i] + 1
                  if count [i] == 1:
@@ -209,7 +211,9 @@ QtnoutriverMCrouted = apply_riverrout (sigma,n,Qtnout_record,Headerwater,upSBs, 
 QtnoutriverMCrouted
 np.where(QtnoutriverMCrouted == 0)
 outputdata =  pd.DataFrame({'Subbasin':subbasin, 'Qtnout':Qtnout_record, 'QtnoutriverMCrouted':QtnoutriverMCrouted})
-outputdata.to_csv(mdata_folder/"output.csv", index=False)
+outputdata.to_csv(data_folder/"routing_output.csv", index=False)
+
+
 
 ## Section 4 Calculate sediment loading from bluffs and streambanks using theHOCKEY STICK
 def hockystick (outputdata,les_sb, cob_sb, map_sb,period):
@@ -238,38 +242,38 @@ def hockystick (outputdata,les_sb, cob_sb, map_sb,period):
     slbaseline_COB = 17557
     slbaseline_LES = 18771
 
-    SBoutput_LES = outputdata.loc[outputdata['Subbasin'] == les_sb].reset_index(inplace=False)
-    SBoutput_COB = outputdata.loc[outputdata['Subbasin'] == cob_sb].reset_index(inplace=False)
+    #SBoutput_LES = outputdata.loc[outputdata['Subbasin'] == les_sb].reset_index(inplace=False)
+    #SBoutput_COB = outputdata.loc[outputdata['Subbasin'] == cob_sb].reset_index(inplace=False)
     SBoutput_MAP = outputdata.loc[outputdata['Subbasin'] == map_sb].reset_index(inplace=False)
 
 
     for j in range (0,9131):
         # populate LES/COB/MAP sediment loading from incised zone
-        if SBoutput_LES['QtnoutriverMCrouted'][j] > Qth * LES_DA:
-            Qs_LES [j] = CQ_a * (SBoutput_LES['QtnoutriverMCrouted'][j] / LES_DA)**CQ_b * LES_L
-        else:
-            Qs_LES [j] = 0
+#        if SBoutput_LES['QtnoutriverMCrouted'][j] > Qth * LES_DA:
+#            Qs_LES [j] = CQ_a * (SBoutput_LES['QtnoutriverMCrouted'][j] / LES_DA)**CQ_b * LES_L
+#        else:
+#            Qs_LES [j] = 0
 
-        if SBoutput_COB['QtnoutriverMCrouted'][j] > Qth * COB_DA:
-            Qs_COB [j] = CQ_a * (SBoutput_COB['QtnoutriverMCrouted'][j] / LES_DA)**CQ_b * COB_L
-        else:
-            Qs_COB [j] = 0
+#        if SBoutput_COB['QtnoutriverMCrouted'][j] > Qth * COB_DA:
+#            Qs_COB [j] = CQ_a * (SBoutput_COB['QtnoutriverMCrouted'][j] / LES_DA)**CQ_b * COB_L
+#        else:
+#            Qs_COB [j] = 0
 
         if SBoutput_MAP['QtnoutriverMCrouted'][j] > Qth * MAP_DA:
             Qs_MAP [j] = CQ_a * (SBoutput_MAP['QtnoutriverMCrouted'][j] / MAP_DA)**CQ_b * MAP_L
         else:
             Qs_MAP [j] = 0
 
-        Qs_LESsum = Qs_LESsum + Qs_LES [j]
-        Qs_COBsum = Qs_COBsum + Qs_COB [j]
+        #Qs_LESsum = Qs_LESsum + Qs_LES [j]
+        #Qs_COBsum = Qs_COBsum + Qs_COB [j]
         Qs_MAPsum = Qs_MAPsum + Qs_MAP [j]
 
-    slmo_LES  = Qs_LESsum / period
-    slmo_COB  = Qs_COBsum / period
+    #slmo_LES  = Qs_LESsum / period
+    #slmo_COB  = Qs_COBsum / period
     slmo_MAP  = Qs_MAPsum / period
-    sum_sl = np.sum([slmo_LES,slmo_COB,slmo_MAP])
-    baselines_sum = np.sum([slbaseline_MAP, slbaseline_COB, slbaseline_LES])
-    reduction_sum = baselines_sum - sum_sl
+    #sum_sl = np.sum([slmo_LES,slmo_COB,slmo_MAP])
+    #baselines_sum = np.sum([slbaseline_MAP, slbaseline_COB, slbaseline_LES])
+    #reduction_sum = baselines_sum - sum_sl
     perc_Qs = (reduction_sum)/baselines_sum
     return reduction_sum, perc_Qs
 

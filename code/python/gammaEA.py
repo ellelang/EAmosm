@@ -16,6 +16,9 @@ maple29 = pd.read_csv (data_folder/"maple29.csv")
 maple29.head()
 cost_s = maple29['Cost'].sample(n=100, replace = False, random_state=1)
 
+
+
+
 #############################################
 
 
