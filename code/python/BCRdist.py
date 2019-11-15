@@ -17,3 +17,7 @@ wcmo_sortby = WCMO.sort_values(by=['sedbcr'], ascending=False).reset_index()
 wcmo_sortby['sedbcr_dist'] = abs(wcmo_sortby['sedbcr'].diff( periods = 1)) 
 
 wcmo_sortby.to_csv(data_folder/"wcmo_sortby.csv", index = False)
+onetime['sedbcr']
+onetime_sortby = onetime.sort_values(by=['sedbcr'], ascending=False).reset_index()
+onetime_sortby['sedbcr_dist'] = abs(onetime_sortby['sedbcr'].diff( periods = 1)) 
+onetime_sortby.to_csv(data_folder/"onetime_sortby.csv", index = False)
