@@ -36,7 +36,46 @@ new_df = mosmdata.merge(MOSMpointsSB574, left_on=['MOs', 'MOsID'], right_on = ['
 new_df.columns
 new_df = new_df.fillna(0)
 new_df.to_csv(data_folder/"onetime_EA_subbasins.csv", index = False)
+###################################################################################
 
+
+## Creat seeds:
+mosmfile16891 = pd.read_csv(data_folder/"onetime_EA_subbasins.csv")
+NBR_ITEMS = mosmfile16891.shape[0]
+mosmfile16891.columns
 pmt = itertools.product([0,1], repeat=3)
-pmtmatrix = np.matrix(list(pmt))
-sub_val = np.array([19,21,23])
+pmtlist = list(pmt)
+subs = np.array([19,21,23])
+subs_exp = pmtlist*subs
+subs_exp
+
+sce = np.arange(1,9,1)
+sce
+sce_name = ["80000" + str(i) for i in sce]
+sce_name
+
+my_list = subs_exp[3][np.nonzero(subs_exp[3])[0]]
+
+practices = ["WCMO", "ICMO"]
+mosmfile16891['Subbasin'].isin(my_list) 
+mosmfile16891['MOs'].isin(practices) 
+
+mosmfile16891[(mosmfile16891['MOs'].isin(practices)) & (mosmfile16891['Subbasin'].isin(my_list))]
+
+for t in range(len(sce)):
+    conditions = subs_exp[t][np.nonzero(subs_exp[t])[0]]
+    mosmfile16891[sce_name[t]] = [1]* NBR_ITEMS
+    mosmfile16891.loc[mosmfile16891[(mosmfile16891['MOs'].isin(practices)) & (mosmfile16891['Subbasin'].isin(conditions))].index,sce_name[t]] = 4
+  
+        
+  
+mosmfile16891['800001']
+
+mosmfile16891.to_csv(data_folder/"EXPseeds.csv", index = False)
+#####################
+random_end = np.array([-1 , 27732.9131,  149929377.3994,  49015.6441,  897.6627,  1021.1096,  211.799,  4626,  0,  2119,  517,  7874,  537,  106,  1112 , 546, 0, 30969626.3368])
+seeds1 = mosmfile16891[sce_name[0]]
+seeds_ft1 = np.append(seeds1,random_end)
+
+mosmfile16891[sce_name[0]].to_csv('seed1example.txt', sep='\t')
+np.savetxt(data_folder/'testseeds.txt', mosmfile16891[sce_name[0]], delimiter='')  
