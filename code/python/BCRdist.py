@@ -21,3 +21,17 @@ onetime['sedbcr']
 onetime_sortby = onetime.sort_values(by=['sedbcr'], ascending=False).reset_index()
 onetime_sortby['sedbcr_dist'] = abs(onetime_sortby['sedbcr'].diff( periods = 1)) 
 onetime_sortby.to_csv(data_folder/"onetime_sortby.csv", index = False)
+onetime_sortby.columns
+
+MOSMpointsSB574 = pd.read_csv(data_folder/"MOSMpointsSB574.csv")
+mosmdata = pd.read_csv(data_folder/"mosmdata.csv")
+MOSMpointsSB574.MOs.describe()
+mosmdata.columns
+mosmdata.dtypes
+MOSMpointsSB574.dtypes
+
+
+new_df = mosmdata.merge(MOSMpointsSB574, left_on=['MOs', 'MOsID'], right_on = ['MOs', 'MOsID'], how='left')
+new_df.columns
+new_df = new_df.fillna(0)
+new_df.to_csv(data_folder/"onetime_EA_subbasins.csv", index = False)
