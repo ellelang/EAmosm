@@ -5,6 +5,7 @@ import numpy as np
 import geopandas as gpd
 from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
+import itertools
 data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
 
 onetime = pd.read_csv(data_folder/"mosmonetime_EA.csv")
@@ -35,3 +36,7 @@ new_df = mosmdata.merge(MOSMpointsSB574, left_on=['MOs', 'MOsID'], right_on = ['
 new_df.columns
 new_df = new_df.fillna(0)
 new_df.to_csv(data_folder/"onetime_EA_subbasins.csv", index = False)
+
+pmt = itertools.product([0,1], repeat=3)
+pmtmatrix = np.matrix(list(pmt))
+sub_val = np.array([19,21,23])
