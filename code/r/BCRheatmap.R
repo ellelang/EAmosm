@@ -61,15 +61,51 @@ pts$MOsID <- as.numeric(as.character(pts$MOsID))
 pts2 = pts %>% 
   left_join(BCRdat, by = c("MOs", "MOsID" )) %>% 
   select (MOs, MOsID, Subbasin, SED_BCR, Duck_BCR,Zone, coords.x1, coords.x2)
-points <- fortify(pts2)
+points <- fortify(pts)
 head(points)
 points
 write.dbf(pts2,"shapefiles/MOSMmerge_points_subinfo.dbf")
 
 ggplot(points, aes(x = coords.x1, y = coords.x2, group = MOs, fill = SED_BCR)) +
-  geom_point(lwd=0.2)+
-  theme_map()
+  geom_point(aes(color = SED_BCR),  alpha = 0.08)
+
+
+pts_wcmo <- pts %>% 
+  filter(MOs == "WCMO") %>% 
+  arrange(desc(SED_BCR)) %>% 
+  mutate(SED_BCR_DIST = abs(SED_BCR - lag(SED_BCR, default = SED_BCR[1]))*1000)
+
+
+write.csv(x = pts_wcmo, file = "pts_wcmo.csv", row.names = FALSE)
+
+
+wcmo_sortby = read.csv(file = "wcmo_sortby.csv") 
+colnames(wcmo_sortby)
  
+pts_wcmosort <- pts %>% 
+  filter(MOs == "WCMO") %>% 
+  left_join(wcmo_sortby, by = "MOsID" ) %>%
+  select (MOsID, Subbasin,Zone,sedbcr, sedbcr_dist, coords.x1, coords.x2)
+
+write.dbf(points_WCMO,"shapefiles/WCMO.dbf")
+
+points_WCMO <- fortify(pts_wcmo)
+points_WCMOsort <- fortify(pts_wcmosort)
+
+pts_wcmo$SED_BCR_DIST
+
+require("graphics")
+
+ggplot(points_WCMO, aes(x = coords.x1, y = coords.x2, fill = SED_BCR_DIST), shape = c) +
+  geom_tile() +
+  geom_point( aes(color = SED_BCR_DIST),size = 2, alpha = 0.15)+
+  scale_fill_gradient()
+
+
+  
+ggplot(points_WCMOsort, aes(x = coords.x1, y = coords.x2), fill = sedbcr_dist) +
+  geom_point( alpha = 0.5)
+  
 
 
 # Construct a SpatialPointsDataFrame
