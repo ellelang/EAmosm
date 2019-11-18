@@ -73,9 +73,25 @@ mosmfile16891['800001']
 
 mosmfile16891.to_csv(data_folder/"EXPseeds.csv", index = False)
 #####################
+
+seedsfile = pd.read_csv(data_folder/"EXPseeds.csv")
+seedsfile.shape
+seedsfile.columns
+
+onlyseeds = seedsfile.iloc[:,-8:]
+onlyseeds.shape
+onlyseeds.columns
 random_end = np.array([-1 , 27732.9131,  149929377.3994,  49015.6441,  897.6627,  1021.1096,  211.799,  4626,  0,  2119,  517,  7874,  537,  106,  1112 , 546, 0, 30969626.3368])
-seeds1 = mosmfile16891[sce_name[0]]
-seeds_ft1 = np.append(seeds1,random_end)
+random_end.shape
+
+a = np.tile(random_end,(8,1))
+a.shape
+a_trans = np.transpose(a)
+df_a = pd.DataFrame(a_trans, index=range(a_trans.shape[0]), columns=range(a_trans.shape[1]))
+df_a.columns = onlyseeds.columns
+
+pd.concat([onlyseeds, df_a])
+
 
 mosmfile16891[sce_name[0]].to_csv('seed1example.txt', sep='\t')
 np.savetxt(data_folder/'testseeds.txt', mosmfile16891[sce_name[0]], delimiter='')  
