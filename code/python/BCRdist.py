@@ -72,7 +72,7 @@ for t in range(len(sce)):
 mosmfile16891['800001']
 
 mosmfile16891.to_csv(data_folder/"EXPseeds.csv", index = False)
-#####################
+##################### seeds 
 
 seedsfile = pd.read_csv(data_folder/"EXPseeds.csv")
 seedsfile.shape
@@ -87,11 +87,24 @@ random_end.shape
 a = np.tile(random_end,(8,1))
 a.shape
 a_trans = np.transpose(a)
+
 df_a = pd.DataFrame(a_trans, index=range(a_trans.shape[0]), columns=range(a_trans.shape[1]))
+df_a.columns
 df_a.columns = onlyseeds.columns
 
-pd.concat([onlyseeds, df_a])
+seeds_df = pd.concat([onlyseeds, df_a]).reset_index().drop(['index'],axis=1)
+seeds_df.columns
+seeds_df.head
 
+seedslist = []
+for c in seeds_df.columns:
+    seeds_sce = seeds_df[c].tolist()
+    seeds_sce.insert(0, int(c))
+    seedslist.append(seeds_sce)
+    #seeds_df[c].to_csv(c + '.txt', index=False)
+
+aaa = np.array(seedslist)
+np.savetxt(data_folder/'ExperimentSeeds.txt', aaa,  delimiter=' ', fmt='%d')    
 
 mosmfile16891[sce_name[0]].to_csv('seed1example.txt', sep='\t')
 np.savetxt(data_folder/'testseeds.txt', mosmfile16891[sce_name[0]], delimiter='')  

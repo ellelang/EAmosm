@@ -22,8 +22,10 @@ icmoSedRed = icmomaple.groupby(['Subbasin_2'])['SedRed'].sum().reset_index()
 
 wcmoSedRed.columns = ['Subbasin','SedRed']
 icmoSedRed.columns = ['Subbasin','SedRed']
-SedRedSum = pd.merge([wcmoSedRed, icmoSedRed])
+#SedRedSum = pd.merge([wcmoSedRed, icmoSedRed])
 SedSum = pd.concat([wcmoSedRed,icmoSedRed]).groupby(['Subbasin'])['SedRed'].sum().reset_index()
+SedSum
+
 pmt = itertools.product([0,1], repeat=3)
 pmtmatrix = np.matrix(list(pmt))
 sumSed = pmtmatrix.dot(SedSum['SedRed'])
