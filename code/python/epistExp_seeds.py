@@ -7,7 +7,7 @@ from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
 data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
-
+mosmfile16891 = pd.read_csv(data_folder/"onetime_EA_subbasins.csv")
 wcmoga = pd.read_csv(data_folder/"wcmogawhole.csv")
 icmoga = pd.read_csv(data_folder/"icmogawhole.csv")
 wcmo_subset = wcmoga[ (wcmoga['HYDSB_LES30SB']==28) | (wcmoga['HYDSB_LES30SB']==25 )| (wcmoga['HYDSB_LES30SB']==19)]
@@ -27,6 +27,18 @@ sumSed = pmtmatrix.dot(SedSum['SedRed'])
 
 wcmo_subset.groupby(['HYDSB_LES30SB']).count()
 icmo_subset.groupby(['Subbasin_2']).count()
+#############3
+subs = np.array([19,25,28])
+practices = ["WCMO", "ICMO"]
+mosmfile16891['Subbasin'].isin(subs) 
+mosmfile16891['MOs'].isin(practices) 
+
+mosmsubset_192528 = mosmfile16891.loc[mosmfile16891[(mosmfile16891['MOs'].isin(practices)) & (mosmfile16891['Subbasin'].isin(subs))].index,]
+SedSum_check = mosmsubset_192528.groupby(['Subbasin'])['SED_B'].sum().reset_index()
+SedSum_check
+pmt = itertools.product([0,1], repeat=3)
+pmtmatrix = np.matrix(list(pmt))
+sumSed_check = pmtmatrix.dot(SedSum_check['SED_B'])
 
 
 ## Creat seeds:
@@ -36,6 +48,7 @@ mosmfile16891.columns
 pmt = itertools.product([0,1], repeat=3)
 pmtlist = list(pmt)
 subs = np.array([19,25,28])
+
 subs_exp = pmtlist*subs
 subs_exp
 
@@ -45,11 +58,6 @@ sce_name = ["80000" + str(i) for i in sce]
 sce_name
 
 my_list = subs_exp[3][np.nonzero(subs_exp[3])[0]]
-
-practices = ["WCMO", "ICMO"]
-mosmfile16891['Subbasin'].isin(my_list) 
-mosmfile16891['MOs'].isin(practices) 
-
 mosmfile16891[(mosmfile16891['MOs'].isin(practices)) & (mosmfile16891['Subbasin'].isin(my_list))]
 
 for t in range(len(sce)):
