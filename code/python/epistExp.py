@@ -34,8 +34,9 @@ sumSed = pmtmatrix.dot(SedSum['SedRed'])
 
 mdata_folder = Path("C:/Users/langzx/Documents")
 wcmo = pd.read_csv(mdata_folder/"WCMO.csv")
-wcmo_subset = wcmo[ (wcmo['HYDSB_LES30SB']==23) | (wcmo['HYDSB_LES30SB']==21 )| (wcmo['HYDSB_LES30SB']==19)]
-wcmo_subset.shape
+#wcmo_subset = wcmo[ (wcmo['HYDSB_LES30SB']==23) | (wcmo['HYDSB_LES30SB']==21 )| (wcmo['HYDSB_LES30SB']==19)]
+
+wcmo[ wcmo['HYDSB_LES30SB']==19].shape
 wcmo_subset['select'] = np.repeat(1,405)
 
 flowdata = pd.read_csv(mdata_folder/"SWAT_WY.csv")
