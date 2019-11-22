@@ -9,12 +9,11 @@ library(tmap)
 library(spatstat)
 library(viridisLite)
 library(RColorBrewer)
-
 mosmfile16891 <- read.csv("onetime_EA_subbasins.csv")
 
 
 
-## Lambda scenarios function
+y## Lambda scenarios function
 ldscenario<-function (ld){
   
   BCRT<-matrix (NA, nrow = N, ncol = length(ld) )
