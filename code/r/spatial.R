@@ -48,11 +48,11 @@ dist_df_prep$SB574
 sub574_dist <- as.data.frame(dist_df_prep %>% 
     group_by(SB574)%>% 
     summarise(
-    sedred_mean = mean(SED_B,na.rm=TRUE),
-    sedbcr_mean = mean(SED_BCR_x,na.rm=TRUE),
-    distldsed0_mean = mean(dist_ldsed0,na.rm=TRUE),
-    distldsed0.5_mean = mean(dist_ldsed0.5,na.rm=TRUE),
-    distldsed1_mean = mean(dist_ldsed1,na.rm=TRUE), 
+    SR_mean = mean(SED_B,na.rm=TRUE),
+    BCRsd_mean = mean(SED_BCR_x,na.rm=TRUE),
+    disld0 = mean(dist_ldsed0,na.rm=TRUE),
+    disld05 = mean(dist_ldsed0.5,na.rm=TRUE),
+    disld1 = mean(dist_ldsed1,na.rm=TRUE), 
   ))
 
 
@@ -62,11 +62,11 @@ sub574_sp <- st_read("shapefiles/SB574.shp")
 sub574_sp <- sub574_sp %>% left_join(sub574_dist, by.x = SB574, by.y = SB574)
 
 names(sub574_sp)
-#st_write(sub574_sp, "shapefiles/dist_sub574.shp", driver="ESRI Shapefile") 
+st_write(sub574_sp, "shapefiles/dist_sub574.shp", driver="ESRI Shapefile") 
 
 tm_shape(sub574_sp) + 
-  tm_polygons("distldsed0_mean", palette = "Greens", 
-              style = "quantile", n = 12, 
+  tm_polygons("disld05", palette = "Greens", 
+              style = "jenks", n = 12, 
               title = "Focus on Sediment Reduction")
 
 
