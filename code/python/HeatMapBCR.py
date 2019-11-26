@@ -48,7 +48,8 @@ newdf['lambdased1.0']
 newdfld1 = newdf.sort_values(by=['lambdased1.0'], ascending=False).reset_index()
 newdfld1['sedbcr_dist'] = abs(newdf['SED_BCR_x'].diff( periods = 1))                                    
 ######################################
-from pyproj import Proj
+#from pyproj import Proj
+
 
 sub_ld574 = gpd.read_file (data_folder/"shapefiles/dist_sub574.shp")
 sub_30 = gpd.read_file (data_folder/"shapefiles/subbasins.shp")
@@ -59,15 +60,17 @@ sub_ld574['dstld1_'] = sub_ld574['dstld1_'].fillna(0)
 sub_ld574['dst0_5_'] = sub_ld574['dst0_5_'].fillna(0)
 sub_ld574['dstld0_'] = sub_ld574['dstld0_'].fillna(0)* 10000
 
+#sub_ld574.to_crs(epsg = 3857)
+
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
-sub_ld574.plot(ax = ax[0], column = 'dstld1_', scheme = 'naturalbreaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_ld574.plot(ax = ax[0], column = 'dstld1_', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[0], color = 'blue', legend = False)
 ax[0].set_axis_off() 
 ax[0].title.set_text(r'$\lambda = 1$')  
 ax[0].title.set_fontsize(25)
            
-sub_ld574.plot(ax = ax[1], column = 'dst0_5_', scheme = 'naturalbreaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_ld574.plot(ax = ax[1], column = 'dst0_5_', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 sub_30.plot(ax = ax[1], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[1], color = 'blue', legend = False)
 ax[1].set_axis_off() 
@@ -75,7 +78,7 @@ ax[1].set_axis_off()
 ax[1].title.set_text(r'$\lambda = 0.5$')  
 ax[1].title.set_fontsize(25) 
 
-sub_ld574.plot(ax = ax[2], column = 'dstld0_', scheme = 'naturalbreaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_ld574.plot(ax = ax[2], column = 'dstld0_', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 sub_30.plot(ax = ax[2], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[2], color = 'blue', legend = False)
 ax[2].set_axis_off()  
