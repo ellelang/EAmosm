@@ -2,6 +2,7 @@ rm(list = ls())
 setwd("C:/Users/langzx/Desktop/github/EAmosm/data")
 library(sf)
 library(dplyr)
+library(tidyverse)
 library(ggplot2)
 library(ggthemes)
 library(tmap)
@@ -15,8 +16,18 @@ sub574_sp$SB574
 names(sub574_sp)
 
 
+##############distance to outlet 
+dis_outlet <- read.csv("dist574_to_outlet.csv")
+names(dis_outlet)
 
+outlet_dist <- dis_outlet %>% spread(key = NEAR_FID, value = DISTANCE )
+head(outlet_dist)
+colnames(outlet_dist) <- c("SB574", "OLT0", "OLT1","OLT2", "OLT3","OLT4")
 
+####################
+
+sub574_sp <- sub574_sp %>% left_join(outlet_dist, by = "SB574")
+sub574_sp
 
 sub574_sp[is.na(sub574_sp)] <- 0
 ###########Moran I test
@@ -35,18 +46,23 @@ MCld1<- moran.mc(sub574_sp$disld1, lw, nsim=1000)
 MCld1
 
 ################
+library(olsrr)
+model <- lm(disld0 ~ NEAR_DIST + OLT0 + OLT1 + OLT2 + OLT3 + OLT4, data = sub574_sp)
+ols_step_best_subset(model)
+## the distance to outlets are not significant
+
 names(sub574_sp)
 model_dist0 <- glm(
-  disld0 ~ NEAR_DIST  # + HydroSB + Zone , 
+  disld0 ~ NEAR_DIST,  # + HydroSB + Zone , 
   data = sub574_sp, 
-  family =gaussian)
+  family = "gaussian")
 
 summary(model_dist0)
 
 model_dist0.5 <- glm(
-  disld05 ~ NEAR_DIST # + HydroSB + Zone, 
+  disld05 ~ NEAR_DIST + OLT2, # + HydroSB + Zone, 
   data = sub574_sp, 
-  family =gaussian)
+  family = gaussian)
 
 summary(model_dist0.5)
 
@@ -126,3 +142,4 @@ tm_shape(sub574_sp) + tm_polygons(lwd = 0.25, "disld05", style = "jenks", n = 12
 plot(variogram(disld0~ 1, sub574_sp))
 plot(variogram(disld05~1, sub574_sp))
 plot(variogram(disld1~ 1, sub574_sp))
+
