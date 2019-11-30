@@ -11,6 +11,7 @@ library(spatstat)
 library(viridisLite)
 library(RColorBrewer)
 library(gstat)
+library(fastDummies)
 sub574_sp <- st_read("shapefiles/dist_sub574.shp")
 sub574_sp$SB574
 names(sub574_sp)
@@ -26,12 +27,12 @@ colnames(outlet_dist) <- c("SB574", "OLT0", "OLT1","OLT2", "OLT3","OLT4")
 
 ####################
 
-sub574_sp <- sub574_sp %>% left_join(outlet_dist, by = "SB574")
-sub574_sp
+sub574_sp_df <- sub574_sp %>% left_join(outlet_dist, by = "SB574")
+sub574_sp_df
 
-sub574_sp[is.na(sub574_sp)] <- 0
+sub574_sp_df[is.na(sub574_sp_df)] <- 0
 ###########Moran I test
-nb <- poly2nb(sub574_sp)
+nb <- poly2nb(sub574_sp_df)
 lw <- nb2listw(nb, style="B", zero.policy=TRUE)
 #ld_1.lag <- lag.listw(lw, sub574_sp$disld1)
 
@@ -47,35 +48,40 @@ MCld1
 
 ################
 library(olsrr)
-model <- lm(disld0 ~ NEAR_DIST + OLT0 + OLT1 + OLT2 + OLT3 + OLT4, data = sub574_sp)
+model <- lm(disld1 ~ NEAR_DIST + Zone + HydroSB + OLT0 + OLT1 + OLT2 + OLT3 + OLT4, data = sub574_sp_df)
 ols_step_best_subset(model)
 ## the distance to outlets are not significant
 
-names(sub574_sp)
+sub574_sp_df <- dummy_cols(sub574_sp_df, select_columns = c("Zone","HydroSB"),
+                           remove_first_dummy = TRUE)
+
+
+
+names(sub574_sp_df)
 model_dist0 <- glm(
-  disld0 ~ NEAR_DIST,  # + HydroSB + Zone , 
-  data = sub574_sp, 
+  disld0 ~ NEAR_DIST + Zone,  # + HydroSB + Zone , 
+  data = sub574_sp_df, 
   family = "gaussian")
 
 summary(model_dist0)
 
 model_dist0.5 <- glm(
-  disld05 ~ NEAR_DIST + OLT2, # + HydroSB + Zone, 
-  data = sub574_sp, 
+  disld05 ~ NEAR_DIST , # + HydroSB + Zone, 
+  data = sub574_sp_df, 
   family = gaussian)
 
 summary(model_dist0.5)
 
 model_dist1 <- glm(
-  disld1 ~ NEAR_DIST, # Zone is more significant
-  data = sub574_sp, 
+  disld1 ~ NEAR_DIST , # Zone is more significant
+  data = sub574_sp_df, 
   family =gaussian)
 
 summary(model_dist1)
 confint(model_dist1)
 
 ################### Residual autocorrelation test
-sub574_sp$spatial_resid_glm <- residuals(model_dist0)
+sub574_sp$spatial_resid_glm <- residuals(model_dist1)
 plot(sub574_sp['spatial_resid_glm'])
 moran.mc(sub574_sp$spatial_resid_glm, nb2listw(nb), 999)
 
