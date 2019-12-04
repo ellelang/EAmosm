@@ -36,14 +36,14 @@ nb <- poly2nb(sub574_sp_df)
 lw <- nb2listw(nb, style="B", zero.policy=TRUE)
 #ld_1.lag <- lag.listw(lw, sub574_sp$disld1)
 
-moran.test(sub574_sp$disld1,lw)
-MCld0<- moran.mc(sub574_sp$disld0, lw, nsim=999)
+moran.test(sub574_sp_df$disld1,lw)
+MCld0<- moran.mc(sub574_sp_df$disld0, lw, nsim=999)
 MCld0
 
-MCld0.5<- moran.mc(sub574_sp$disld05, lw, nsim=999)
+MCld0.5<- moran.mc(sub574_sp_df$disld05, lw, nsim=999)
 MCld0.5
 
-MCld1<- moran.mc(sub574_sp$disld1, lw, nsim=1000)
+MCld1<- moran.mc(sub574_sp_df$disld1, lw, nsim=1000)
 MCld1
 
 ################
@@ -59,7 +59,7 @@ sub574_sp_df <- dummy_cols(sub574_sp_df, select_columns = c("Zone","HydroSB"),
 
 names(sub574_sp_df)
 model_dist0 <- glm(
-  disld0 ~ NEAR_DIST + Zone,  # + HydroSB + Zone , 
+  disld0 ~ NEAR_DIST,  # + HydroSB + Zone , 
   data = sub574_sp_df, 
   family = "gaussian")
 
@@ -73,7 +73,7 @@ model_dist0.5 <- glm(
 summary(model_dist0.5)
 
 model_dist1 <- glm(
-  disld1 ~ NEAR_DIST , # Zone is more significant
+  disld1 ~ NEAR_DIST + Zone_2 + Zone_1, # Zone is more significant
   data = sub574_sp_df, 
   family =gaussian)
 
@@ -81,9 +81,9 @@ summary(model_dist1)
 confint(model_dist1)
 
 ################### Residual autocorrelation test
-sub574_sp$spatial_resid_glm <- residuals(model_dist1)
-plot(sub574_sp['spatial_resid_glm'])
-moran.mc(sub574_sp$spatial_resid_glm, nb2listw(nb), 999)
+sub574_sp_df$spatial_resid_glm <- residuals(model_dist1)
+#plot(sub574_sp_df['spatial_resid_glm'])
+moran.mc(sub574_sp_df$spatial_resid_glm, nb2listw(nb), 999)
 
 ############################### Bayesian GLM
 library(R2BayesX)
@@ -100,13 +100,14 @@ summary(bayes_ld1)
 subbasins <- st_read("shapefiles/subbasins.shp")
 length(subbasins$OBJECTID)
 streams <- st_read("shapefiles/LeSueur_Streams.shp")
-nb30 <- poly2nb(streams) # doesn't work
+#nb30 <- poly2nb(streams) # doesn't work
 length(streams$OBJECTID)
 
 
 nb30 <- poly2nb(subbasins) 
 #sub_gra <- nb2gra(nb)
 sub_30_gra <- nb2gra(nb30)
+
 names(subbasins)
 # Fit Bayesian spatial model ==> add a spatial term: 30 hydrology subbasin 
 bayld1_spatial <- bayesx(

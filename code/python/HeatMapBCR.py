@@ -56,21 +56,21 @@ sub_30 = gpd.read_file (data_folder/"shapefiles/subbasins.shp")
 streams = gpd.read_file (data_folder/"shapefiles/LeSueur_Streams.shp") 
 sub_ld574.columns
 sub_30.columns
-sub_ld574['dstld1_'] = sub_ld574['dstld1_'].fillna(0)
-sub_ld574['dst0_5_'] = sub_ld574['dst0_5_'].fillna(0)
-sub_ld574['dstld0_'] = sub_ld574['dstld0_'].fillna(0)* 10000
+sub_ld574['disld1'] = sub_ld574['disld1'].fillna(0)
+sub_ld574['disld05'] = sub_ld574['disld05'].fillna(0)
+sub_ld574['disld0'] = sub_ld574['disld0'].fillna(0)* 10000
 
 #sub_ld574.to_crs(epsg = 3857)
 
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
-sub_ld574.plot(ax = ax[0], column = 'dstld1_', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_ld574.plot(ax = ax[0], column = 'disld1', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[0], color = 'blue', legend = False)
 ax[0].set_axis_off() 
 ax[0].title.set_text(r'$\lambda = 1$')  
 ax[0].title.set_fontsize(25)
            
-sub_ld574.plot(ax = ax[1], column = 'dst0_5_', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_ld574.plot(ax = ax[1], column = 'disld05', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 sub_30.plot(ax = ax[1], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[1], color = 'blue', legend = False)
 ax[1].set_axis_off() 
@@ -78,11 +78,11 @@ ax[1].set_axis_off()
 ax[1].title.set_text(r'$\lambda = 0.5$')  
 ax[1].title.set_fontsize(25) 
 
-sub_ld574.plot(ax = ax[2], column = 'dstld0_', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_ld574.plot(ax = ax[2], column = 'disld0', scheme = 'natural_breaks', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 sub_30.plot(ax = ax[2], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[2], color = 'blue', legend = False)
 ax[2].set_axis_off()  
 ax[2].set_axis_off() 
 ax[2].title.set_text(r'$\lambda = 0$')  
 ax[2].title.set_fontsize(25)     
-plt.savefig(data_folder/'choropleth_bcrdist.pdf', bbox_inches='tight', dpi = 600)
+plt.savefig(data_folder/'choropleth_bcrdist.png', bbox_inches='tight', dpi = 600)
