@@ -12,10 +12,10 @@ library(viridisLite)
 library(RColorBrewer)
 library(gstat)
 library(fastDummies)
+library(xtable)
 sub574_sp <- st_read("shapefiles/dist_sub574.shp")
 sub574_sp$SB574
 names(sub574_sp)
-
 
 ##############distance to outlet 
 dis_outlet <- read.csv("dist574_to_outlet.csv")
@@ -48,7 +48,7 @@ MCld1
 
 ################
 library(olsrr)
-model <- lm(disld1 ~ NEAR_DIST + Zone + HydroSB + OLT0 + OLT1 + OLT2 + OLT3 + OLT4, data = sub574_sp_df)
+model <- lm(disld1 ~ NEAR_DIST + OLT0 + OLT1 + OLT2 + OLT3 + OLT4, data = sub574_sp_df)
 ols_step_best_subset(model)
 ## the distance to outlets are not significant
 
@@ -59,26 +59,30 @@ sub574_sp_df <- dummy_cols(sub574_sp_df, select_columns = c("Zone","HydroSB"),
 
 names(sub574_sp_df)
 model_dist0 <- glm(
-  disld0 ~ NEAR_DIST + Zone,  # + HydroSB + Zone , 
+  disld0 ~ NEAR_DIST +OLT3,  # + HydroSB + Zone , 
   data = sub574_sp_df, 
   family = "gaussian")
+
+xtable(model_dist0)
 
 summary(model_dist0)
 
 model_dist0.5 <- glm(
-  disld05 ~ NEAR_DIST , # + HydroSB + Zone, 
+  disld05 ~ NEAR_DIST + OLT3, # + HydroSB + Zone, 
   data = sub574_sp_df, 
   family = gaussian)
 
 summary(model_dist0.5)
+xtable(model_dist0.5)
 
 model_dist1 <- glm(
-  disld1 ~ NEAR_DIST , # Zone is more significant
+  disld1 ~ NEAR_DIST + OLT3, # Zone is more significant
   data = sub574_sp_df, 
   family =gaussian)
 
 summary(model_dist1)
 confint(model_dist1)
+xtable(model_dist1)
 
 ################### Residual autocorrelation test
 sub574_sp$spatial_resid_glm <- residuals(model_dist1)
@@ -110,7 +114,7 @@ sub_30_gra <- nb2gra(nb30)
 names(subbasins)
 # Fit Bayesian spatial model ==> add a spatial term: 30 hydrology subbasin 
 bayld1_spatial <- bayesx(
-  disld1 ~ NEAR_DIST + sx(HydroSB, bs = "spatial", map = sub_30_gra),
+  disld1 ~ NEAR_DIST + sx(zone, bs = "spatial", map = sub_30_gra),
   family = "gaussian", data = data.frame(sub574_sp), 
   control = bayesx.control(seed = 66100)
 )
