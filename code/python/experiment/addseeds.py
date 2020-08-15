@@ -1,6 +1,7 @@
 
 from pathlib import Path
-data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+#data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+data_folder = Path('/Users/zhenlang/Desktop/github/EAmosm/data')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -17,6 +18,7 @@ from deap import creator
 from deap import tools
 import itertools
 demodata = pd.read_csv(data_folder/"demodata.csv")
+demodata.head(2)
 rankbyld0 = demodata["rankbyld0.0"]
 rankbyld0
 
@@ -31,6 +33,7 @@ ldrankname
 
 
 top = np.round(np.arange(0.1,1,0.1),1)
+top
 top_pct = top*100
 topname = ["top" + str(int(i)) for i in top_pct]
 topname
