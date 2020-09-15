@@ -1,0 +1,36 @@
+bcr_NO3,bcr_sed
+RES Marsh 25 ha,RES Marsh 25 ha
+RES Marsh 50 ha,RES Lake 25 ha
+RES Lake 25 ha,GW
+RES Lake 50 ha,RES Marsh 50 ha
+RES Marsh 250 ha,RES Lake 50 ha
+RES Lake 250 ha,Buffer Strip
+RES Marsh 500 ha,BufferStrip-GW
+RES Lake 500 ha,RES Marsh 250 ha
+RES Marsh 1000 ha,RES Lake 250 ha
+Buffer Strip,RAMO
+RES Lake 1000 ha,RES Marsh 500 ha
+GW,RES Lake 500 ha
+Random,PND Marsh small
+CoverCrop,PND Lake small
+"GW, CoverCrop",RES Marsh 1000 ha
+BufferStrip-CoverCrop,PND Marsh medium
+"BufferStrip, GW, CoverCrop",RES Lake 1000 ha
+RES Marsh 2000 ha,PND Marsh large
+RES Lake 2000 ha,Random
+BufferStrip-GW,PND Lake medium
+"GW, CoverCrop, FertilizerManagement","GW, CoverCrop"
+"BufferStrip, CoverCrop, FertilizerManagement","BufferStrip, GW, CoverCrop"
+PND Lake small,PND Lake large
+"CoverCrop, FertilizerManagement",BufferStrip-CoverCrop
+"BufferStrip, GW, CoverCrop, FertilizerManagement",RES Marsh 2000 ha
+PND Marsh small,"GW, FertilizerManagement"
+PND Lake medium,"BufferStrip, GW, FertilizerManagement"
+PND Marsh medium,RES Lake 2000 ha
+PND Lake large,CoverCrop
+BufferStrip-FM,BufferStrip-FM
+"GW, FertilizerManagement","GW, CoverCrop, FertilizerManagement"
+"BufferStrip, GW, FertilizerManagement","BufferStrip, GW, CoverCrop, FertilizerManagement"
+PND Marsh large,"BufferStrip, CoverCrop, FertilizerManagement"
+FM,"CoverCrop, FertilizerManagement"
+RAMO,FM
