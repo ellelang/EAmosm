@@ -1,6 +1,6 @@
 from pathlib import Path
-#data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
-data_folder = Path('/Users/zhenlang/Desktop/github/EAmosm/data')
+data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+#data_folder = Path('/Users/zhenlang/Desktop/github/EAmosm/data')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
