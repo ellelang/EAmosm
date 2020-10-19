@@ -1,14 +1,26 @@
 from pathlib import Path
-#data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
-data_folder = Path('/Users/zhenlang/Desktop/github/EAmosm/data')
+data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+#data_folder = Path('/Users/zhenlang/Desktop/github/EAmosm/data')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import array
 import random
 import json
+from mpl_toolkits.mplot3d import Axes3D
+import seaborn as sns
 
-dat = pd.read_csv (data_folder/'MRB2020/MRB2020seedTest.csv')
+dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
+dat = dat.iloc[1:]
+
+dat['NitRed'] = np.where(dat['NitRed']==0, 
+                       np.random.uniform(1, 100, size=len(dat)), 
+                       dat['NitRed'])
+
+dat['SedRed'] = np.where(dat['SedRed']==0, 
+                       np.random.uniform(1, 100, size=len(dat)), 
+                       dat['SedRed'])
+
 demodata = dat[(dat['SedRed']!= 0) & (dat['NitRed'] != 0)]
 demodata.head(2)
 nsize = len (demodata.index)
@@ -25,7 +37,6 @@ bcr_sc = [x/y for x, y in zip(Ob_sed , Ob_cost)]
 bcr_nc = [x/y for x, y in zip(Ob_nit, Ob_cost)]
 
 
-
 dict_new = {
     'ID': obid,
     'SRed': Ob_sed,
@@ -38,7 +49,7 @@ dict_new = {
 ks = pd.DataFrame(dict_new)
 ld = np.round(np.arange(0,1.1,0.1),1)
 ldname = ["ld" + str(i) for i in ld]
-
+ldname
 wht_ld = [[0] * nsize for j in range(len(ld))]
 for j in range(len(ld)):
     ld_value = ld [j]
@@ -81,15 +92,85 @@ for i in range (len (ld)):
         df_dataset[ldtopname[nameindex[i]+t]] = seed_ld
         
         
-#df_dataset.to_csv(data_folder/"MRB2020/demodata_seeds.csv",index = False, sep=',', encoding='utf-8')
+df_dataset.to_csv(data_folder/"MRB2020/demodata_seeds.csv",index = False, sep=',', encoding='utf-8')
 df_dataset.columns
+df_dataset.head(4)
+
+###############Objective space
+nit_base = 26257132
+sed_base = 590389
+
+df_ld = pd.concat([ks.reset_index(drop=True), ld_df], axis=1)
+df_ld.columns
+
+df_ld.sort_values(by = 'ld0.0', inplace = True, ascending = False ) 
+df_ld.head(4)
+df_ld[['SRed', 'NRed','Cost']]
+
+def ObjectCumSum (df,col_name):
+    df_sorted= df.sort_values(by = col_name, inplace = True, ascending = False )
+    df_obj = df[['SRed', 'NRed','Cost']]
+    df_obj_sum = df_obj.cumsum(axis = 0)
+    df_obj_sum['ld'] = col_name
+    return df_obj_sum
+
+#df_09 = ObjectCumSum(df_ld,'ld0.9')
+#df_09.head(4)
 
 
+
+appended_data = []
+
+for i in ldname:
+    df_cumsum = ObjectCumSum(df_ld, i)
+    appended_data.append(df_cumsum)
+    
+
+df_obj = pd.concat(appended_data)
+df_obj.shape
+
+df_obj['origin'] = 'wBCR'
+
+sample_range = range (0, len(df_obj), 200)
+len(list(sample_range))
+
+#df_obj1 = df_obj.iloc[sample_range]\
+df_obj1 = df_obj[df_obj['ld'].isin (['ld0.0','ld0.1','ld0.2',
+                                     'ld0.3','ld0.4','ld0.5',
+                                     'ld0.6','ld0.7','ld0.8',
+                                     'ld0.9'])]
+
+ax = plt.axes(projection='3d')
+ax.scatter3D(df_obj.NRed, df_obj.SRed, df_obj.Cost, \
+             color = '#17202A', label = "wBCR", marker = 'o',
+             linewidth=0.001)
+
+ax.set_xlabel('Sediment Reduction',labelpad=5)
+ax.set_ylabel('NO3 Reduction',labelpad=5)
+ax.set_zlabel('Cost ($/Year)',labelpad=5)
+ax.legend(loc=2, fontsize = 5)
+plt.show() 
+
+df_obj['ld'].unique()
+NO3Cost = sns.lmplot(x='NRed', y='Cost', hue='ld', data=df_obj1,scatter_kws={"s": 80, 'alpha': 0.8},
+                     fit_reg=False)   
+    
 ###########Create seeds
 
 
 onlyseeds = df_dataset.iloc[:,-len(ldtopname):]
 onlyseeds.columns
+
+selectseeds_ld = onlyseeds.loc[:, ["ld0.0top10","ld0.0top30","ld0.0top60",
+                                    "ld0.5top10","ld0.5top30","ld0.5top60",
+                                   "ld1.0top10","ld1.0top30","ld1.0top60" ]]
+
+
+selectseeds_ld.to_csv(data_folder/'MRB2020/selectld.csv')
+
+
+
+
 
 random_end = np.array([-1 , 27732.9131,  149929377.3994,  49015.6441,  897.6627,  1021.1096,  211.799,  4626,  0,  2119,  517,  7874,  537,  106,  1112 , 546, 0, 30969626.3368])
 random_end.shape
@@ -114,6 +195,7 @@ len(ld)
 sce_name1 = [str(int(i*10))  for i in ld]
 sce_name2 = [str(int(i*10)) for i in top]
 
+import itertools
 mylist = list(itertools.product(sce_name1, sce_name2))
 namelist = [s1 + s2 + '800000' for s1, s2 in mylist]
 namelist
@@ -131,3 +213,5 @@ for c in seeds_df.columns:
 aaa = np.array(seedslist)
 aaa
 np.savetxt(data_folder/'MRB2020/ExperimentSeeds.txt', aaa,  delimiter=' ', fmt='%d')    
+
+
