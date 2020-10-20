@@ -1,6 +1,6 @@
 from pathlib import Path
-data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
-#data_folder = Path('/Users/zhenlang/Desktop/github/EAmosm/data')
+#data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -37,7 +37,7 @@ sub_new.head(3)
 sub_result = pd.DataFrame(sub_new['new'].to_list(), columns=practice)
 sub_result['subbasin'] = sub_new['subbasin'].str.extract('(\d+)').astype(int)
 sub_result.head(3)
-sub_result.to_csv(data_folder/"MRB2020/selected_spatial/subbasin_ld0top10.csv", index = False)
+#sub_result.to_csv(data_folder/"MRB2020/selected_spatial/subbasin_ld0top10.csv", index = False)
 
 
 
@@ -132,9 +132,18 @@ def mapplot (merge_file, ax_num):
 
 
 
-f, ((ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9)) = plt.subplots(3,3, figsize=(72, 72))
+f, ((ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9)) = plt.subplots(3,3, figsize=(42, 42))
 ax_list = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 ax_list
+for i in range(9):
+    ax_list[i].title.set_text(plotname[i])
+    ax_list[i].title.set_size(24)
+f.legend(handles=legend_patches, loc='upper right',
+         prop={'size': 24},
+         
+         bbox_transform=plt.gcf().transFigure)
+f.suptitle('wBCR ranking selected results', fontsize = 60)
+    
 mapplot (MergeFile[0], ax_list[0])
 mapplot (MergeFile[1], ax_list[1])
 mapplot (MergeFile[2], ax_list[2])
@@ -144,10 +153,8 @@ mapplot (MergeFile[5], ax_list[5])
 mapplot (MergeFile[6], ax_list[6])
 mapplot (MergeFile[7], ax_list[7])
 mapplot (MergeFile[8], ax_list[8])
-for i in range(9):
-    ax_list[i].title.set_text(plotname[i])
-plt.legend(handles=legend_patches, loc='upper right')
-plt.show()        
+
+   
 
     
 

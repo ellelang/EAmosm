@@ -1,6 +1,6 @@
 from pathlib import Path
-data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
-#data_folder = Path('/Users/zhenlang/Desktop/github/EAmosm/data')
+#data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -155,7 +155,10 @@ ax.legend(loc=2, fontsize = 5)
 plt.show() 
 
 df_obj['ld'].unique()
-NO3Cost = sns.lmplot(x='NRed', y='Cost', hue='ld', data=df_obj, scatter_kws={"s": 80, 'alpha': 0.8},
+NO3Cost = sns.lmplot(x='NRed', y='Cost', hue='ld', data=df_obj, scatter_kws={"s": 30, 'alpha': 0.8},
+                     fit_reg=False) 
+
+SedCost = sns.lmplot(x='SRed', y='Cost', hue='ld', data=df_obj, scatter_kws={"s": 30, 'alpha': 0.8},
                      fit_reg=False)   
     
 ###########Create seeds
