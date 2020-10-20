@@ -12,6 +12,7 @@ import seaborn as sns
 
 dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
+dat.columns
 
 dat['NitRed'] = np.where(dat['NitRed']==0, 
                        np.random.uniform(1, 100, size=len(dat)), 
@@ -28,6 +29,7 @@ nsize
 
 
 obid = demodata ['ID']
+oblabel = demodata ['Label']
 Ob_sed = demodata ['SedRed'] 
 Ob_nit = demodata ['NitRed']
 Ob_cost = demodata ['Cost']
@@ -39,6 +41,7 @@ bcr_nc = [x/y for x, y in zip(Ob_nit, Ob_cost)]
 
 dict_new = {
     'ID': obid,
+    'Label': oblabel,
     'SRed': Ob_sed,
     'NRed':Ob_nit,
     'Cost':Ob_cost,
@@ -97,8 +100,8 @@ df_dataset.columns
 df_dataset.head(4)
 
 ###############Objective space
-nit_base = 26257132
-sed_base = 590389
+nit_base = 26257132.9431
+sed_base = 590389.1611
 
 df_ld = pd.concat([ks.reset_index(drop=True), ld_df], axis=1)
 df_ld.columns
@@ -152,21 +155,23 @@ ax.legend(loc=2, fontsize = 5)
 plt.show() 
 
 df_obj['ld'].unique()
-NO3Cost = sns.lmplot(x='NRed', y='Cost', hue='ld', data=df_obj1,scatter_kws={"s": 80, 'alpha': 0.8},
+NO3Cost = sns.lmplot(x='NRed', y='Cost', hue='ld', data=df_obj, scatter_kws={"s": 80, 'alpha': 0.8},
                      fit_reg=False)   
     
 ###########Create seeds
+df_dataset.columns
+#onlyseeds = df_dataset.iloc[:,-len(ldtopname):]
+#onlyseeds.columns
 
+# selectseeds_ld = onlyseeds.loc[:, ["ld0.0top10","ld0.0top30","ld0.0top60",
+#                                     "ld0.5top10","ld0.5top30","ld0.5top60",
+#                                    "ld1.0top10","ld1.0top30","ld1.0top60" ]]
 
-onlyseeds = df_dataset.iloc[:,-len(ldtopname):]
-onlyseeds.columns
-
-selectseeds_ld = onlyseeds.loc[:, ["ld0.0top10","ld0.0top30","ld0.0top60",
+selectseeds_ld = df_dataset.loc[:, ["Label","ld0.0top10","ld0.0top30","ld0.0top60",
                                     "ld0.5top10","ld0.5top30","ld0.5top60",
                                    "ld1.0top10","ld1.0top30","ld1.0top60" ]]
 
-
-selectseeds_ld.to_csv(data_folder/'MRB2020/selectld.csv')
+selectseeds_ld.to_csv(data_folder/'MRB2020/selectld.csv', index = False)
 
 
 
