@@ -106,27 +106,29 @@ subbasin.columns
 subbasin['Subbasin']
 sub_merge_robust = pd.merge(subbasin, ave_dis_df, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
 sub_merge_robust.columns
+streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN_project.shp")
+
 
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
-sub_merge_robust.plot(ax = ax[0], column = 'disld1 ', scheme = 'jenks_caspall_sampled', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_merge_robust.plot(ax = ax[0], column = 'disld1 ', scheme = 'quantiles', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-#streams.plot(ax = ax[0], color = 'blue', legend = False)
+streams.plot(ax = ax[0], color = 'blue', legend = False)
 ax[0].set_axis_off() 
 ax[0].title.set_text(r'$\lambda = 1$')  
 ax[0].title.set_fontsize(25)
 
 
-sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'jenks_caspall_sampled', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'quantiles', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-#streams.plot(ax = ax[0], color = 'blue', legend = False)
+streams.plot(ax = ax[1], color = 'blue', legend = False)
 ax[1].set_axis_off() 
 ax[1].title.set_text(r'$\lambda = 0.5$')  
 ax[1].title.set_fontsize(25)
 
 
-sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'jenks_caspall_sampled', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'quantiles', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-#streams.plot(ax = ax[0], color = 'blue', legend = False)
+streams.plot(ax = ax[2], color = 'blue', legend = False)
 ax[2].set_axis_off() 
 ax[2].title.set_text(r'$\lambda = 0$')  
 ax[2].title.set_fontsize(25)
