@@ -98,9 +98,10 @@ ave_dis = sub_smerge.groupby(['subbasin'])['disld0', 'disld0.5', 'disld1'].mean(
 ave_dis_df = ave_dis.add_suffix(' ').reset_index()
 ave_dis_df['subbasin'] = ave_dis_df['subbasin'].astype(np.int64)
 ave_dis_df.columns
-ave_dis_df['disld0 ']
-
-#######################
+ave_dis_df['disld0 '] = ave_dis_df['disld0 ']*1000
+ave_dis_df['disld0.5 '] = ave_dis_df['disld0.5 ']*1000
+ave_dis_df['disld1 '] = ave_dis_df['disld1 ']*1000
+# #######################
 subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
 subbasin.columns
 subbasin['Subbasin']
@@ -109,8 +110,10 @@ sub_merge_robust.columns
 streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN_project.shp")
 
 
+#['boxplot', 'equalinterval', 'fisherjenks', 'fisherjenkssampled', 'headtailbreaks', 'jenkscaspall', 'jenkscaspallforced', 'jenkscaspallsampled', 'maxp', 'maximumbreaks', 'naturalbreaks', 'quantiles', 'percentiles', 'stdmean', 'userdefined']
+
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
-sub_merge_robust.plot(ax = ax[0], column = 'disld1 ', scheme = 'quantiles', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_merge_robust.plot(ax = ax[0], column = 'disld1 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[0], color = 'blue', legend = False)
 ax[0].set_axis_off() 
@@ -118,7 +121,7 @@ ax[0].title.set_text(r'$\lambda = 1$')
 ax[0].title.set_fontsize(25)
 
 
-sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'quantiles', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[1], color = 'blue', legend = False)
 ax[1].set_axis_off() 
@@ -126,7 +129,7 @@ ax[1].title.set_text(r'$\lambda = 0.5$')
 ax[1].title.set_fontsize(25)
 
 
-sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'quantiles', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 streams.plot(ax = ax[2], color = 'blue', legend = False)
 ax[2].set_axis_off() 
@@ -136,14 +139,50 @@ ax[2].title.set_fontsize(25)
 
 
 #######################
-subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
-subbasin.columns
-subbasin['Subbasin']
-sub_merge_robust = pd.merge(subbasin, ave_dis_df, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
+selectedld = pd.read_csv(data_folder/"MRB2020/selectld.csv")
+sub_hru_id = pd.read_csv(data_folder/"MRB2020/subbasin_ids.csv")
+sub_hru_id.head(3)
+sub_smerge = pd.merge(sub_hru_id, new_df_c, how = 'left', left_on = 'Label', right_on = 'Label') 
+sub_smerge.columns
+sub_smerge['ld0.5'].mean()
+max_cost = sub_smerge.groupby(['subbasin'])['Cost'].mean()
+#ave_dis_nit =  sub_smerge.groupby(['subbasin'])[].mean()
+max_cost = max_cost.add_suffix(' ').reset_index()
+max_cost['subbasin'] = ave_cost['subbasin'].astype(np.int64)
 
-sub_merge_robust.columns
+subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
+sub_cost = pd.merge(subbasin, max_cost, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
+sub_cost['Area_acre'] = (sub_cost['Area']/100)* 247.105
+area_mean = np.mean([25, 50, 250, 500, 1000, 2000]) * 2.47105
+area_mean
+sub_cost['cost/acre'] = sub_cost['Cost']/area_mean
+sub_cost['cost/acre'].mean()
 plt.rcParams["legend.fontsize"] = 12
 
 fig, ax = plt.subplots(1, figsize=(15, 15))
-sub_merge_robust.plot(ax = ax, column ='nitbcr_dist ', scheme = 'natural_breaks', k = 18, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)   
+sub_cost.plot(ax = ax, column ='cost/acre', scheme = 'quantiles', k = 18, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)   
 
+weighted_cost = pd.read_csv(data_folder/"MRB2020/weightedcost0923.csv")
+weighted_cost.columns
+weighted_cost['WLD_COST'] = weighted_cost['WLD_w'] + weighted_cost['ASC_w']
+sub_cost = pd.merge(sub_cost,weighted_cost, how= 'left')
+sub_cost.columns
+sub_cost['surplus'] = sub_cost['cost/acre'] - weighted_cost['WLD_COST']
+import matplotlib.patches as mpatches
+
+red_patch = mpatches.Patch(color='red', label='Payment > WTA')
+grey_patch = mpatches.Patch(color='grey', label='Payment < WTA')
+
+fig, ax = plt.subplots(1, figsize=(15, 15))
+sub_cost.plot(ax = ax, linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+sub_cost[sub_cost['cost/acre'] < sub_cost['WLD_COST'] ].plot(ax = ax, color = 'grey', label = 'Cost < WTA')
+sub_cost[sub_cost['cost/acre'] > sub_cost['WLD_COST'] ].plot(ax = ax, color = 'red', label = 'Cost > WTA')
+plt.legend(plt.legend(handles=[red_patch, grey_patch]))
+
+plt.rcParams["legend.fontsize"] = 6
+plt.rcParams['savefig.dpi'] = 300
+
+fig, ax = plt.subplots(1, figsize=(35, 35))
+#sub_cost.plot(ax = ax, linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+sub_cost.plot(column = 'surplus', scheme = 'jenkscaspall', k = 8, cmap = 'Reds',linewidth= 0.2,  edgecolor = "#B3B3B3", legend= True)
+plt.savefig(data_folder/"MRB2020/surplus.png")
