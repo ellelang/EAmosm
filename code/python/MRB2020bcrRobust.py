@@ -7,3 +7,141 @@ from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
 data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
+
+dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
+dat = dat.iloc[1:]
+dat.shape
+
+dat['NitRed'] = np.where(dat['NitRed']<=0, 
+                       np.random.uniform(1, 100, size=len(dat)), 
+                       dat['NitRed'])
+
+dat['SedRed'] = np.where(dat['SedRed']<=0, 
+                       np.random.uniform(1, 100, size=len(dat)), 
+                       dat['SedRed'])
+
+dat['SED_BCR'] = dat['SedRed']/dat['Cost']
+dat['NIT_BCR'] = dat['NitRed']/dat['Cost']
+newdf = dat.sort_values(by=['SED_BCR'],ascending=False).reset_index()
+newdf.shape
+newdf['sedbcr_dist'] = abs(newdf['SED_BCR'].diff( periods = 1))
+newdf['sedbcr_dist'][0] = 0
+newdf['nitbcr_dist'] = abs(newdf['NIT_BCR'].diff( periods = 1))
+newdf['nitbcr_dist'][0] = 0
+newdf.columns
+
+
+##################3
+nsize = len (dat.index)
+nsize
+bcr_sc = dat['SED_BCR']
+bcr_nc = dat['NIT_BCR']
+ld = np.round(np.arange(0,1.1,0.1),1)
+ldname = ["ld" + str(i) for i in ld]
+ldname
+wht_ld = [[0] * nsize for j in range(len(ld))]
+for j in range(len(ld)):
+    ld_value = ld [j]
+    wht_ld[j] = [ld_value * x + (1-ld_value) * y for x, y in zip(bcr_sc  , bcr_nc)]   
+    
+ld_array = np.transpose(np.array(wht_ld))
+ld_array
+ld_df = pd.DataFrame(ld_array)
+ld_df.columns = ldname 
+ldname   
+ld_df.head(3)
+ld_df.shape
+#ld_df.to_csv(data_folder/"MRB2020/df_lambda.csv",index = False)
+df_c = pd.concat([dat.reset_index(drop=True), ld_df], axis=1)
+df_c.shape
+#df_c.to_csv(data_folder/"MRB2020/df_lambda.csv",index = False)
+df_c.columns
+colnamelist = ['ld0.0', 'ld0.5','ld1.0']
+new_col_name = ['disld0', 'disld0.5', 'disld1']
+
+# for i in range (3):
+#     newdf_c = df_c.sort_values(by=colnamelist[i], ascending=False).reset_index()
+#     df_c = newdf_c
+#     df_c[new_col_name[i]] = abs(newdf_c[colnamelist[i]].diff( periods = 1)).fillna(0)
+
+newdf_ld0 = df_c.sort_values(by='ld0.0', ascending=False).reset_index()
+newdf_ld0['disld0'] = abs(newdf_ld0['ld0.0'].diff( periods = 1)).fillna(0)
+newdf_ld05= df_c.sort_values(by='ld0.5', ascending=False).reset_index()
+newdf_ld05['disld0.5'] = abs(newdf_ld05['ld0.5'].diff( periods = 1)).fillna(0)
+newdf_ld1 = df_c.sort_values(by='ld1.0', ascending=False).reset_index()
+newdf_ld1['disld1'] = abs(newdf_ld1['ld1.0'].diff( periods = 1)).fillna(0)
+
+dw1d0 = newdf_ld0[['Label', 'disld0']]
+dw1d05 = newdf_ld05[['Label', 'disld0.5']]
+dw1d1 = newdf_ld1[['Label', 'disld1']]
+
+dm0 = dw1d0.merge(dw1d05,on='Label').merge(dw1d1,on='Label')
+
+dm0.columns
+dm0.shape
+
+new_df_c = df_c.merge(dm0, on = 'Label')
+
+new_df_c.columns
+new_df_c.to_csv(data_folder/"MRB2020/df_lambda.csv",index = False)
+
+sub_hru_id = pd.read_csv(data_folder/"MRB2020/sub_hru_all.csv")
+#sub_hru_id = pd.read_csv(data_folder/"MRB2020/subbasin_ids.csv")
+sub_hru_id.head(3)
+sub_smerge = pd.merge(sub_hru_id, new_df_c, how = 'left', left_on = 'Label', right_on = 'Label') 
+sub_smerge
+
+#sub_smerge['subbasin'] = sub_smerge['subbasin'].str.extract('(\d+)').astype(int)
+#sub_smerge.to_csv(data_folder/"MRB2020/subbasin_id_i.csv", index = False)
+ave_dis = sub_smerge.groupby(['subbasin'])['disld0', 'disld0.5', 'disld1'].mean()
+#ave_dis_nit =  sub_smerge.groupby(['subbasin'])[].mean()
+ave_dis_df = ave_dis.add_suffix(' ').reset_index()
+ave_dis_df['subbasin'] = ave_dis_df['subbasin'].astype(np.int64)
+ave_dis_df.columns
+ave_dis_df['disld0 ']
+
+#######################
+subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
+subbasin.columns
+subbasin['Subbasin']
+sub_merge_robust = pd.merge(subbasin, ave_dis_df, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
+sub_merge_robust.columns
+
+fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
+sub_merge_robust.plot(ax = ax[0], column = 'disld1 ', scheme = 'jenks_caspall_sampled', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+#sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+#streams.plot(ax = ax[0], color = 'blue', legend = False)
+ax[0].set_axis_off() 
+ax[0].title.set_text(r'$\lambda = 1$')  
+ax[0].title.set_fontsize(25)
+
+
+sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'jenks_caspall_sampled', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+#sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+#streams.plot(ax = ax[0], color = 'blue', legend = False)
+ax[1].set_axis_off() 
+ax[1].title.set_text(r'$\lambda = 0.5$')  
+ax[1].title.set_fontsize(25)
+
+
+sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'jenks_caspall_sampled', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
+#sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+#streams.plot(ax = ax[0], color = 'blue', legend = False)
+ax[2].set_axis_off() 
+ax[2].title.set_text(r'$\lambda = 0$')  
+ax[2].title.set_fontsize(25)
+
+
+
+#######################
+subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
+subbasin.columns
+subbasin['Subbasin']
+sub_merge_robust = pd.merge(subbasin, ave_dis_df, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
+
+sub_merge_robust.columns
+plt.rcParams["legend.fontsize"] = 12
+
+fig, ax = plt.subplots(1, figsize=(15, 15))
+sub_merge_robust.plot(ax = ax, column ='nitbcr_dist ', scheme = 'natural_breaks', k = 18, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)   
+
