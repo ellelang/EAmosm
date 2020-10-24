@@ -6,8 +6,8 @@ import geopandas as gpd
 from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
-data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
-
+#data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
+data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
 dat.shape
@@ -198,7 +198,7 @@ subbasin.crs
 
 
 counties_3states = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/3statesMRBclipped.shp")
-counties_3states.crs = {'init': 'NAD83'}
+counties_3states.crs = {'init': 'epsg:4326'}
 counties_3states['coords'] = counties_3states['geometry'].apply(lambda x: x.representative_point().coords[:])
 counties_3states['coords'] = [coords[0] for coords in counties_3states['coords']]
 
@@ -215,10 +215,18 @@ for idx, row in counties_3states.iterrows():
     ax.annotate(s=row['NAME'], xy=row['coords'],
                  verticalalignment='center',fontsize=15)
 # Ot
+fig, ax = plt.subplots(1, figsize=(150, 250))
 
-#subweightedcost.plot(ax = ax, linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8, )
+subweightedcost.plot(ax = ax, linewidth= 1.2,edgecolor='black', legend = False)
+plt.show()
+
 
 fig, ax = plt.subplots(1, figsize=(15, 15))
-counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8, )
-subweightedcost.plot(ax = ax, column = 'CC_w', scheme = 'jenkscaspall', k = 8, cmap = 'Reds',linewidth= 0.2,  edgecolor = "#B3B3B3", legend= True)
+counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8)
+
+fig, ax = plt.subplots(1, figsize=(15, 15))
+counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8)
+
+
+fig, ax = plt.subplots(1, figsize=(15, 15))
+subweightedcost.plot(ax = ax)
