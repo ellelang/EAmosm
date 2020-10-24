@@ -1,6 +1,6 @@
 from pathlib import Path
-#data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
-data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
+data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+#data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -131,6 +131,7 @@ for i in ldname:
 
 df_obj = pd.concat(appended_data)
 df_obj.shape
+df_obj.columns
 
 df_obj['origin'] = 'wBCR'
 

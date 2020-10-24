@@ -186,3 +186,39 @@ fig, ax = plt.subplots(1, figsize=(35, 35))
 #sub_cost.plot(ax = ax, linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
 sub_cost.plot(column = 'surplus', scheme = 'jenkscaspall', k = 8, cmap = 'Reds',linewidth= 0.2,  edgecolor = "#B3B3B3", legend= True)
 plt.savefig(data_folder/"MRB2020/surplus.png")
+
+##############cost
+subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
+subbasin.crs
+subbasin.crs = {'init': 'epsg:4326'}
+
+plt.rcParams["legend.fontsize"] = 6
+
+subbasin.crs
+
+
+counties_3states = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/3statesMRBclipped.shp")
+counties_3states.crs = {'init': 'NAD83'}
+counties_3states['coords'] = counties_3states['geometry'].apply(lambda x: x.representative_point().coords[:])
+counties_3states['coords'] = [coords[0] for coords in counties_3states['coords']]
+
+
+
+weighted_cost = pd.read_csv(data_folder/"MRB2020/weightedcost0923.csv")
+weighted_cost.columns
+subweightedcost = pd.merge(subbasin,weighted_cost, how= 'left')
+
+subweightedcost.crs
+fig, ax = plt.subplots(1, figsize=(15, 15))
+
+for idx, row in counties_3states.iterrows():
+    ax.annotate(s=row['NAME'], xy=row['coords'],
+                 verticalalignment='center',fontsize=15)
+# Ot
+
+#subweightedcost.plot(ax = ax, linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8, )
+
+fig, ax = plt.subplots(1, figsize=(15, 15))
+counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8, )
+subweightedcost.plot(ax = ax, column = 'CC_w', scheme = 'jenkscaspall', k = 8, cmap = 'Reds',linewidth= 0.2,  edgecolor = "#B3B3B3", legend= True)
