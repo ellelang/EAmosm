@@ -6,8 +6,8 @@ import geopandas as gpd
 from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
-#data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
-data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
+data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
+#data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
 dat.shape
@@ -102,12 +102,12 @@ ave_dis_df['disld0 '] = ave_dis_df['disld0 ']*1000
 ave_dis_df['disld0.5 '] = ave_dis_df['disld0.5 ']*1000
 ave_dis_df['disld1 '] = ave_dis_df['disld1 ']*1000
 # #######################
-subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
+subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_subbasins.shp")
 subbasin.columns
 subbasin['Subbasin']
 sub_merge_robust = pd.merge(subbasin, ave_dis_df, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
 sub_merge_robust.columns
-streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN_project.shp")
+streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN.shp")
 
 
 #['boxplot', 'equalinterval', 'fisherjenks', 'fisherjenkssampled', 'headtailbreaks', 'jenkscaspall', 'jenkscaspallforced', 'jenkscaspallsampled', 'maxp', 'maximumbreaks', 'naturalbreaks', 'quantiles', 'percentiles', 'stdmean', 'userdefined']
@@ -188,11 +188,12 @@ sub_cost.plot(column = 'surplus', scheme = 'jenkscaspall', k = 8, cmap = 'Reds',
 plt.savefig(data_folder/"MRB2020/surplus.png")
 
 ##############cost
-subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_5_subbasins.shp")
+subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_subbasins.shp")
 subbasin.crs
-subbasin.crs = {'init': 'epsg:4326'}
+#subbasin.crs = {'init': 'epsg:4326'}
 
-plt.rcParams["legend.fontsize"] = 6
+plt.rcParams["legend.fontsize"] = 12
+plt.rcParams['savefig.dpi'] = 300
 
 subbasin.crs
 
@@ -202,6 +203,7 @@ counties_3states.crs = {'init': 'epsg:4326'}
 counties_3states['coords'] = counties_3states['geometry'].apply(lambda x: x.representative_point().coords[:])
 counties_3states['coords'] = [coords[0] for coords in counties_3states['coords']]
 
+counties_3states.NAME
 
 
 weighted_cost = pd.read_csv(data_folder/"MRB2020/weightedcost0923.csv")
@@ -215,18 +217,31 @@ for idx, row in counties_3states.iterrows():
     ax.annotate(s=row['NAME'], xy=row['coords'],
                  verticalalignment='center',fontsize=15)
 # Ot
-fig, ax = plt.subplots(1, figsize=(150, 250))
+fig, ax = plt.subplots(1, figsize=(15, 15))
 
 subweightedcost.plot(ax = ax, linewidth= 1.2,edgecolor='black', legend = False)
-plt.show()
+#plt.show()
+
+
+fig, ax = plt.subplots(1, figsize=(15, 15))
+for idx, row in counties_3states.iterrows():
+    ax.annotate(s=row['NAME'], xy=row['coords'],
+                 verticalalignment='center',fontsize=15)
+
+ax.legend(title='Weighted subbasin land opportunity cost')
+subweightedcost.plot(ax = ax, column = 'WLD_w' ,scheme = 'jenkscaspall', k = 8, cmap = 'OrRd', linewidth= 1.2,edgecolor = "#B3B3B3", legend = True)
+counties_3states.plot(ax = ax, edgecolor = "black", color = 'none', linewidth= 1.8)
+#plt.legend(title="Weighted subbasin land opportunity cost")
+plt.savefig(data_folder/"MRB2020/county_costs.png")
+#plt.show()
+
 
 
 fig, ax = plt.subplots(1, figsize=(15, 15))
 counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8)
 
+
 fig, ax = plt.subplots(1, figsize=(15, 15))
+#subweightedcost.plot(ax = ax)
 counties_3states.plot(ax = ax, edgecolor = "#B3B3B3", color = 'lightgrey', linewidth= 0.8)
 
-
-fig, ax = plt.subplots(1, figsize=(15, 15))
-subweightedcost.plot(ax = ax)
