@@ -6,22 +6,81 @@ import geopandas as gpd
 from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
-data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
-#data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
+import random
+#data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
+data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
 dat.shape
 
-dat['NitRed'] = np.where(dat['NitRed']<=0, 
-                       np.random.uniform(1, 100, size=len(dat)), 
-                       dat['NitRed'])
+#dat = dat.replace(0, np.NaN)
+random.seed(40)
 
-dat['SedRed'] = np.where(dat['SedRed']<=0, 
-                       np.random.uniform(1, 100, size=len(dat)), 
-                       dat['SedRed'])
+dat['NitRed'] = np.where(dat['NitRed']==0, 
+                        np.random.uniform(1, 100, size=len(dat)), 
+                        dat['NitRed'])
 
+dat['SedRed'] = np.where(dat['SedRed']==0, 
+                        np.random.uniform(1, 100, size=len(dat)), 
+                        dat['SedRed'])
 dat['SED_BCR'] = dat['SedRed']/dat['Cost']
 dat['NIT_BCR'] = dat['NitRed']/dat['Cost']
+dat['DUO_BCR'] = 0.5*dat['SED_BCR'] + 0.5*dat['NIT_BCR']
+
+dat['SED_BCR'] = dat['SED_BCR'] * 1000
+dat['NIT_BCR']  = dat['NIT_BCR'] * 1000
+dat['DUO_BCR'] = dat['DUO_BCR']* 1000
+#####
+sub_hru_id = pd.read_csv(data_folder/"MRB2020/sub_hru_all.csv")
+#sub_hru_id = pd.read_csv(data_folder/"MRB2020/subbasin_ids.csv")
+sub_hru_id.head(3)
+#sub_hru_id['Practice'].unique()[12]
+#sub_hru_id = sub_hru_id[sub_hru_id['Practice'] == ' InC-M25']
+sub_datsmerge = pd.merge(sub_hru_id, dat, how = 'left', left_on = 'Label', right_on = 'Label') 
+sub_datsmerge
+sub_datsmerge = sub_datsmerge[(sub_datsmerge[['SED_BCR', 'NIT_BCR', 'DUO_BCR']] > 0).all(1)]
+sub_datsmerge.shape
+bcr_dis = sub_datsmerge.groupby(['subbasin'])['SED_BCR', 'NIT_BCR', 'DUO_BCR'].mean()
+bcr_dis = bcr_dis.add_suffix(' ').reset_index()
+subbasin = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/MRB_subbasins.shp")
+subbasin.columns
+sub_merge_bcr = pd.merge(subbasin, bcr_dis, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
+
+sub_merge_bcr['SED_BCR ']
+
+streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN.shp")
+
+fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
+#streams.plot(ax = ax[0], color = 'blue', legend = False)
+sub_merge_bcr.plot(ax = ax[0], column = 'SED_BCR ', scheme = 'jenkscaspall', k = 12, cmap = "Purples", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
+#sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+
+ax[0].set_axis_off() 
+ax[0].title.set_text(r'$\lambda = 1$')  
+ax[0].title.set_fontsize(25)
+
+#streams.plot(ax = ax[1], color = 'blue', legend = False)
+sub_merge_bcr.plot(ax = ax[1], column = 'DUO_BCR ', scheme = 'jenkscaspall', k = 12, cmap = "Purples", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
+#sub_30.plot(ax = ax[1], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+#
+ax[1].set_axis_off() 
+ax[1].title.set_text(r'$\lambda = 0.5$')  
+ax[1].title.set_fontsize(25)
+
+#streams.plot(ax = ax[2], color = 'blue', legend = False)
+sub_merge_bcr.plot(ax = ax[2], column = 'NIT_BCR ', scheme = 'jenkscaspall', k = 12, cmap = "Purples", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
+#sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
+#
+ax[2].set_axis_off() 
+ax[2].title.set_text(r'$\lambda = 0$')  
+ax[2].title.set_fontsize(25)
+#fig.suptitle('Spatial pattern of wBCR ranking', size=28)
+plt.savefig(data_folder/"MRB2020/wbcrspatial.png", dpi = 300)
+
+#######
+
+
+
 newdf = dat.sort_values(by=['SED_BCR'],ascending=False).reset_index()
 newdf.shape
 newdf['sedbcr_dist'] = abs(newdf['SED_BCR'].diff( periods = 1))
@@ -87,7 +146,7 @@ new_df_c.to_csv(data_folder/"MRB2020/df_lambda.csv",index = False)
 
 sub_hru_id = pd.read_csv(data_folder/"MRB2020/sub_hru_all.csv")
 #sub_hru_id = pd.read_csv(data_folder/"MRB2020/subbasin_ids.csv")
-sub_hru_id.head(3)
+#sub_hru_id.head(3)
 sub_smerge = pd.merge(sub_hru_id, new_df_c, how = 'left', left_on = 'Label', right_on = 'Label') 
 sub_smerge
 
@@ -113,30 +172,33 @@ streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN.shp")
 #['boxplot', 'equalinterval', 'fisherjenks', 'fisherjenkssampled', 'headtailbreaks', 'jenkscaspall', 'jenkscaspallforced', 'jenkscaspallsampled', 'maxp', 'maximumbreaks', 'naturalbreaks', 'quantiles', 'percentiles', 'stdmean', 'userdefined']
 
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
-sub_merge_robust.plot(ax = ax[0], column = 'disld1 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-streams.plot(ax = ax[0], color = 'blue', legend = False)
+#streams.plot(ax = ax[0], color = 'blue', legend = False)
+sub_merge_robust.plot( ax = ax[0], column = 'disld1 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
+
 ax[0].set_axis_off() 
 ax[0].title.set_text(r'$\lambda = 1$')  
 ax[0].title.set_fontsize(25)
 
 
-sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-streams.plot(ax = ax[1], color = 'blue', legend = False)
+#streams.plot(ax = ax[1], color = 'blue', legend = False)
+sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
+
 ax[1].set_axis_off() 
 ax[1].title.set_text(r'$\lambda = 0.5$')  
 ax[1].title.set_fontsize(25)
 
 
-sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-streams.plot(ax = ax[2], color = 'blue', legend = False)
+#streams.plot(ax = ax[2], color = 'blue', legend = False)
+sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
+
 ax[2].set_axis_off() 
 ax[2].title.set_text(r'$\lambda = 0$')  
 ax[2].title.set_fontsize(25)
-
-
+#fig.suptitle('Spatial pattern of wBCR distance', size=28)
+plt.savefig(data_folder/"MRB2020/robustspatial.png", dpi = 300)
 
 #######################
 selectedld = pd.read_csv(data_folder/"MRB2020/selectld.csv")
