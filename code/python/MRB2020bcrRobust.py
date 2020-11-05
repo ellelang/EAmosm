@@ -49,12 +49,20 @@ sub_merge_bcr = pd.merge(subbasin, bcr_dis, how = 'left', left_on = 'Subbasin', 
 sub_merge_bcr['SED_BCR ']
 
 streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN.shp")
+mbcrcomplete = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/ProjectedMinnesotaRiverBasinComplete.shp")
+mbcrcomplete.name
+mbcrcomplete = mbcrcomplete.to_crs("EPSG:4326")
+#Blue Earth, Watonwan, Le Sueur
+mbcrcomplete = mbcrcomplete[mbcrcomplete['name'].isin(['Blue Earth', 'Watonwan', 'Le Sueur'])]
+mbcrcomplete = mbcrcomplete.to_crs("EPSG:4326")
+mbcrcomplete.crs
 
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
 #streams.plot(ax = ax[0], color = 'blue', legend = False)
+
 sub_merge_bcr.plot(ax = ax[0], column = 'SED_BCR ', scheme = 'jenkscaspall', k = 12, cmap = "Purples", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-
+#mbcrcomplete.plot(ax = ax[0], color = 'red',  alpha = 0.4)
 ax[0].set_axis_off() 
 ax[0].title.set_text(r'$\lambda = 1$')  
 ax[0].title.set_fontsize(25)
