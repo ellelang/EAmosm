@@ -7,8 +7,8 @@ from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
 import random
-#data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
-data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
+data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
+#data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
 dat.shape
@@ -58,7 +58,7 @@ mbcrcomplete = mbcrcomplete.to_crs("EPSG:4326")
 mbcrcomplete.crs
 
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
-#streams.plot(ax = ax[0], color = 'blue', legend = False)
+streams.plot(ax = ax[0], color = 'blue', legend = False)
 
 sub_merge_bcr.plot(ax = ax[0], column = 'SED_BCR ', scheme = 'jenkscaspall', k = 12, cmap = "Purples", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
@@ -175,13 +175,28 @@ subbasin['Subbasin']
 sub_merge_robust = pd.merge(subbasin, ave_dis_df, how = 'left', left_on = 'Subbasin', right_on = 'subbasin') 
 sub_merge_robust.columns
 streams = gpd.read_file(data_folder/"MRB2020/shapefilesMRB/RiversMN.shp")
+#streams = streams.loc[streams.STRM_LEVEL == 3]
+river_names = ['Minnesota River','Le Sueur River','Blue Earth River',\
+              'Chippewa River' , 'Cottonwood River', 'Lac qui Parle River'
+              ,'Redwood River','Pomme de Terre River' ,
+             'Yellow Medicine River' ]
 
+streams = streams.loc[streams['NAME'].isin (river_names)]
+# "NAME" = 'Minnesota River' OR 
+# "NAME" = 'Le Sueur River' OR  
+# "NAME" = 'Blue Earth River' OR 
+# "NAME" = 'Chippewa River' OR 
+# "NAME" = 'Cottonwood River' OR 
+# "NAME" = 'Lac qui Parle River' OR 
+# "NAME" = 'Redwood River' OR 
+# "NAME" = 'Pomme de Terre River' OR 
+# "NAME" = 'Yellow Medicine River'
 
 #['boxplot', 'equalinterval', 'fisherjenks', 'fisherjenkssampled', 'headtailbreaks', 'jenkscaspall', 'jenkscaspallforced', 'jenkscaspallsampled', 'maxp', 'maximumbreaks', 'naturalbreaks', 'quantiles', 'percentiles', 'stdmean', 'userdefined']
 
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-#streams.plot(ax = ax[0], color = 'blue', legend = False)
+streams.plot(ax = ax[0], color = 'blue', legend = False)
 sub_merge_robust.plot( ax = ax[0], column = 'disld1 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
 
 ax[0].set_axis_off() 
@@ -190,23 +205,23 @@ ax[0].title.set_fontsize(25)
 
 
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-#streams.plot(ax = ax[1], color = 'blue', legend = False)
+streams.plot(ax = ax[1], color = 'blue', legend = False)
 sub_merge_robust.plot(ax = ax[1], column = 'disld0.5 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
 
 ax[1].set_axis_off() 
 ax[1].title.set_text(r'$\lambda = 0.5$')  
 ax[1].title.set_fontsize(25)
 
-
+#streams.loc[streams.STRM_LEVEL == 2].head(2)
 #sub_30.plot(ax = ax[0], linewidth= 1.2,facecolor= "none", edgecolor='black', legend = False)
-#streams.plot(ax = ax[2], color = 'blue', legend = False)
+streams.plot(ax = ax[2], color = 'blue', legend = False)
 sub_merge_robust.plot(ax = ax[2], column = 'disld0 ', scheme = 'jenkscaspall', k = 12, cmap = "YlOrBr", edgecolor = "#B3B3B3", legend= True, linewidth = 0.2)      
 
 ax[2].set_axis_off() 
 ax[2].title.set_text(r'$\lambda = 0$')  
 ax[2].title.set_fontsize(25)
 #fig.suptitle('Spatial pattern of wBCR distance', size=28)
-plt.savefig(data_folder/"MRB2020/robustspatial.png", dpi = 300)
+plt.savefig(data_folder/"MRB2020/robustspatial.png", dpi = 300, bbox_inches='tight')
 
 #######################
 selectedld = pd.read_csv(data_folder/"MRB2020/selectld.csv")
