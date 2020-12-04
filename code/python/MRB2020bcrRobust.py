@@ -7,8 +7,8 @@ from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
 import random
-data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
-#data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
+#data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
+data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
 dat.shape
