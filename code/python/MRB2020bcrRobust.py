@@ -7,8 +7,8 @@ from geopandas import GeoSeries, GeoDataFrame
 from pathlib import Path
 import itertools
 import random
-#data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
-data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
+data_folder = Path('C:/Users/langzx/Desktop/github/EAmosm/data')
+#data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
 dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
 dat.shape
@@ -64,6 +64,8 @@ mbcrcomplete = mbcrcomplete.to_crs("EPSG:4326")
 mbcrcomplete = mbcrcomplete[mbcrcomplete['name'].isin(['Blue Earth', 'Watonwan', 'Le Sueur'])]
 mbcrcomplete = mbcrcomplete.to_crs("EPSG:4326")
 mbcrcomplete.crs
+
+plt.rcParams.update({'font.size': 13})
 
 fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize=(45, 15))
 streams.plot(ax = ax[0], color = 'blue', legend = False, linewidth = 3.2)
