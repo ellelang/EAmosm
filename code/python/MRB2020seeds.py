@@ -14,13 +14,13 @@ dat = pd.read_csv (data_folder/'MRB2020/MRB1AAT1016.csv')
 dat = dat.iloc[1:]
 dat.columns
 
-dat['NitRed'] = np.where(dat['NitRed']==0, 
-                       np.random.uniform(1, 100, size=len(dat)), 
-                       dat['NitRed'])
+# dat['NitRed'] = np.where(dat['NitRed']==0, 
+#                        np.random.uniform(1, 100, size=len(dat)), 
+#                        dat['NitRed'])
 
-dat['SedRed'] = np.where(dat['SedRed']==0, 
-                       np.random.uniform(1, 100, size=len(dat)), 
-                       dat['SedRed'])
+# dat['SedRed'] = np.where(dat['SedRed']==0, 
+#                        np.random.uniform(1, 100, size=len(dat)), 
+#                        dat['SedRed'])
 
 demodata = dat[(dat['SedRed']!= 0) & (dat['NitRed'] != 0)]
 demodata.head(2)
