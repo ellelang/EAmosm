@@ -12,6 +12,41 @@ from pprint import pprint
 
 data = pd.read_csv (data_folder/'LS2021/1AAT_clean.csv')
 data.columns
+nsize = len (data.index)
+nsize
+
+
+data.columns
+
+Ob_sed = data['SedRed'] 
+Ob_nit = data['NitRed']
+Ob_cost = data['Cost']
+
+bcr_sc = [x/y if y > 0 else 0 for x, y in zip(Ob_sed , Ob_cost)]
+bcr_nc = [x/y if y > 0 else 0 for x, y in zip(Ob_nit, Ob_cost)]
+
+#ks = pd.DataFrame(dict_new)
+ld = np.round(np.arange(0,1.1,0.1),1)
+ldname = ["lambda" + str(i) for i in ld]
+ldname
+ldname
+
+wht_ld = [[0] * nsize for j in range(len(ld))]
+
+for j in range(len(ld)):
+    ld_value = ld [j]
+    wht_ld[j] = [ld_value * x + (1-ld_value) * y for x, y in zip(bcr_nc, bcr_sc)]
+
+ld_array = np.transpose(np.array(wht_ld))
+ld_array
+ld_df = pd.DataFrame(ld_array)
+ld_df.columns = ldname
+ld_df.shape
+
+data = pd.concat([data, ld_df], axis = 1)
+
+data.columns
+data.to_csv(data_folder/'LS2021/1AAT_sredkg.csv')
 data_sub = data[data.Genome == 'sub'].reset_index()
 df_ld05 = data_sub[data_sub['lambda0.5'] > 0].sort_values('lambda0.5',ascending=False).reset_index()
 df_ld05.head()
@@ -42,9 +77,7 @@ def ratio_div (df, ldsce):
         ratio_dict[df_clean['Names'][i]] = statReport(ratio)
     return ratio_dict
 
-ld = np.round(np.arange(0,1.1,0.1),1)
-ldname = ["lambda" + str(i) for i in ld]
-ldname
+
 
 df_bcr_list = []
 for i in ldname:

@@ -1,0 +1,36 @@
+﻿Value,Describe,AlleleCombo
+1,Off,Nothing
+5,"Pond, small",ISO-P-S
+7,"Pond, medium",ISO-P-M
+9,"Pond, large",ISO-P-L
+11,"Marsh, small",ISO-M-S
+13,"Marsh, medium",ISO-M-M
+15,"Marsh, large",ISO-M-L
+5,"Lake, 25 ha",InC-P25
+6,"Lake, 50 ha",InC-P50
+7,"Lake, 250 ha",InC-P250
+8,"Lake, 500 ha",InC-P500
+9,"Lake, 1000 ha",InC-P1000
+10,"Lake, 2000 ha",InC-P2000
+11,"Marsh, 25 ha",InC-M25
+12,"Marsh, 50 ha",InC-M50
+13,"Marsh, 250 ha",InC-M250
+14,"Marsh, 500 ha",InC-M500
+15,"Marsh, 1000 ha",InC-M1000
+16,"Marsh, 2000 ha",InC-M2000
+2,Buffer strips / vegetated filter strips,BS
+3,Grassed Waterway,GW
+4,Cover Crop,CC
+5,Fertilizer Management,FM
+6,"BufferStrip, GW",BS+GW
+7,"BufferStrip, CoverCrop",BS+CC
+8,"BufferStrip, FertilizerManagement",BS+FM
+9,"GW, CoverCrop",GW+CC
+10,"GW, FertilizerManagement",GW+FM
+11,"CoverCrop, FertilizerManagement",CC+FM
+12,"BufferStrip, GW, CoverCrop",BS+GW+CC
+13,"BufferStrip, GW, FertilizerManagement",BS+GW+FM
+14,"BufferStrip, CoverCrop, FertilizerManagement",BS+CC+FM
+15,"GW, CoverCrop, FertilizerManagement",GW+CC+FM
+16,"BufferStrip, GW, CoverCrop, FertilizerManagement",BS+GW+CC+FM
+9,ravines,RAMO

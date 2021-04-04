@@ -10,8 +10,10 @@ import random
 import json
 
 data_1aat = pd.read_csv (data_folder/'LS2021/ldscedf0803ALL.csv')
+nsize = len (data.index)
+nsize
 
-data_1aat.columns
+
 
 hru_data = data_1aat[data_1aat.Genome == 'hru']
 hru_data['Names_str'] = hru_data['Names'].str.replace(r'\d+','')

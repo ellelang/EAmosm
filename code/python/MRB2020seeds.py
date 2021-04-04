@@ -1,6 +1,6 @@
 from pathlib import Path
-data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
-#data_folder = Path('/Users/ellelang/Documents/github/EAmosm/data')
+#data_folder = Path("C:/Users/langzx/Desktop/github/EAmosm/data")
+data_folder = Path('/Users/ellelang/Desktop/github/EAmosm/data')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -22,7 +22,8 @@ dat.columns
 #                        np.random.uniform(1, 100, size=len(dat)), 
 #                        dat['SedRed'])
 
-demodata = dat[(dat['SedRed']!= 0) & (dat['NitRed'] != 0)]
+#demodata = dat[(dat['SedRed']!= 0) & (dat['NitRed'] != 0)]
+demodata = dat
 demodata.head(2)
 nsize = len (demodata.index)
 nsize
@@ -164,8 +165,8 @@ SedCost = sns.lmplot(x='SRed', y='Cost', hue='ld', data=df_obj, scatter_kws={"s"
     
 ###########Create seeds
 df_dataset.columns
-#onlyseeds = df_dataset.iloc[:,-len(ldtopname):]
-#onlyseeds.columns
+onlyseeds = df_dataset.iloc[:,-len(ldtopname):]
+onlyseeds.columns
 
 # selectseeds_ld = onlyseeds.loc[:, ["ld0.0top10","ld0.0top30","ld0.0top60",
 #                                     "ld0.5top10","ld0.5top30","ld0.5top60",
