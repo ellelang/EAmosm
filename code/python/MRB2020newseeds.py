@@ -167,8 +167,15 @@ onlyseeds = pd.concat(onlyseeds_lst, axis = 1)
 onlyseeds.head()
 
 
-random_end = np.array([-1 , 27732.9131,  149929377.3994,  49015.6441,  897.6627,  1021.1096,  211.799,  4626,  0,  2119,  517,  7874,  537,  106,  1112 , 546, 0, 30969626.3368])
+#random_end = np.array([-1 , 27732.9131,  149929377.3994,  49015.6441,  897.6627,  1021.1096,  211.799,  4626,  0,  2119,  517,  7874,  537,  106,  1112 , 546, 0, 30969626.3368])
+
+random_end = np.array([-1 ,2783558989.0477, 189250.710042, 20219.2666, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, \
+                       0.0000, 0.0000, 0.0000, 0.0000, 512.0000 ,0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000,\
+                    266.199692, 163851260.047695, 109379.4818, 188871.3991, 568806.8462, 20219.2585, 1447821.0951, 1023660.701613,\
+                        451434.367985, 930763.807542, 410466.846548, 266.199692, 163851260.047695, 109399.5216, 507517.028962, 1447821.0951])
+
 random_end.shape
+
 
 
 a = np.tile(random_end,(len(ldtopname),1))
@@ -187,11 +194,11 @@ len(top)
 len(ld)
 
 sce_name1 = [str(int(i*10))  for i in ld]
-sce_name2 = [str(int(i*10)) for i in top]
+sce_name2 = [str(int(i*100)) for i in top]
 
 import itertools
 mylist = list(itertools.product(sce_name1, sce_name2))
-namelist = [s1 + s2 + '800000' for s1, s2 in mylist]
+namelist = [ '1000' + s1 + s2  for s1, s2 in mylist]
 len(namelist)
 
 seedstxt = []
@@ -204,7 +211,7 @@ for c in seeds_ALL.columns:
     seedstxt.append(seeds_sce)
     
 aaa = np.array(seedstxt)
-np.savetxt(data_folder/'ExperimentSeeds0403.txt', aaa,  delimiter=' ', fmt='%d')    
+np.savetxt(data_folder/'MRBSeeds20210411.txt', aaa,  delimiter=' ', fmt='%d')    
 
 
 
